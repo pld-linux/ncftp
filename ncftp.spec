@@ -5,7 +5,7 @@ Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente ftp com uma interface agradável
 Name:		ncftp
 Version:	3.1.7
-Release:	1
+Release:	2
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
@@ -20,6 +20,7 @@ Patch1:		%{name}-shared.patch
 Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-317-v6-20040108b.diff.gz
 Patch3:		%{name}-sa_len.patch
 Patch4:		%{name}-ac25x.patch
+Patch5:		%{name}-libdir.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
@@ -55,6 +56,7 @@ automáticos, e muito mais.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5
 
 %build
 ln -sf autoconf/aclocal.m4 .
