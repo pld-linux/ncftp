@@ -4,7 +4,7 @@ Name:		ncftp
 Version:	3.0.3
 Release:	1
 Epoch:		2
-License:	GPL
+License:	The Clarified Artistic License
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
 Group(pl):	Aplikacje/Sieciowe
@@ -61,9 +61,9 @@ install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},%{_applnkdir}/Network/FTP}
 
 %{__make} -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
-install %{SOURCE1} $RPM_BUILD_ROOT%{_prefix}/X11R6/share/applnk/Network/FTP
+install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/FTP
 
-gzip -9nf WHATSNEW-3.0
+gzip -9nf WHATSNEW-3.0 FIREWALL-PROXY-README CHANGELOG LICENSE.txt
 
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -74,7 +74,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc *.gz
-%{_prefix}/X11R6/share/applnk/Network/FTP/ncftp.desktop
+%{_applnkdir}/Network/FTP/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
 %{_mandir}/man1/*
