@@ -16,7 +16,7 @@ Patch4:		ncftp-shared.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	ncurses-devel >= 5.0
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 NcFTP is a ftp client with many advantages over the standard one. It
