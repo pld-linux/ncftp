@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=ncftp
 Comment=NcFTP - a text mode FTP client
+Commnet[es]=NcFTP - cliente ftp modo texto
 Commnet[pt]=NcFTP - cliente FTP modo texto
 Exec=ncftp
 Terminal=1
