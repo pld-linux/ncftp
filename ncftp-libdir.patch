@@ -1,0 +1,41 @@
+--- libncftp/Makefile.in~	2004-02-04 00:33:07.752990441 +0100
++++ libncftp/Makefile.in	2004-02-04 00:39:46.402412962 +0100
+@@ -66,20 +66,20 @@
+ 	-@/bin/ls -l $(LIBSOS) $(LIBSO)
+ 
+ soinstall: $(LIBSO)
+-	[ -d "$(DESTDIR)$(PREFIX)/lib" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/lib"
++	[ -d "$(DESTDIR)$(LIBDIR)/" ] || mkdir -m 755 "$(DESTDIR)$(LIBDIR)/"
+ 	[ -d "$(DESTDIR)$(PREFIX)/include" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/include"
+-	cp $(LIBSO) $(DESTDIR)$(PREFIX)/lib/$(LIBSO)
+-	( cd $(DESTDIR)$(PREFIX)/lib ; /bin/rm -f $(LIBSOS) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
++	cp $(LIBSO) $(DESTDIR)$(LIBDIR)/$(LIBSO)
++	( cd $(DESTDIR)$(LIBDIR)/; /bin/rm -f $(LIBSOS) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
+ 	cp ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
+-	-chmod a+r $(DESTDIR)$(PREFIX)/lib/$(LIBSO) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
++	-chmod a+r $(DESTDIR)$(LIBDIR)/$(LIBSO) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
+ 
+ install: $(LIB)
+-	[ -d "$(DESTDIR)$(PREFIX)/lib" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/lib"
++	[ -d "$(DESTDIR)$(LIBDIR)" ] || mkdir -m 755 "$(DESTDIR)$(LIBDIR)"
+ 	[ -d "$(DESTDIR)$(PREFIX)/include" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/include"
+-	cp $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB)
+-	-@@RANLIB@ $(DESTDIR)$(PREFIX)/lib/$(LIB)
++	cp $(LIB) $(DESTDIR)$(LIBDIR)/$(LIB)
++	-@@RANLIB@ $(DESTDIR)$(LIBDIR)/$(LIB)
+ 	cp ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
+-	-chmod a+r $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
++	-chmod a+r $(LIB) $(DESTDIR)$(LIBDIR)/$(LIB) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
+ 	( cd ../sio ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install)
+ 	( cd ../Strn ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install_min )
+ 
+--- libncftp/Makefile.in~	2004-02-04 00:39:46.402412962 +0100
++++ libncftp/Makefile.in	2004-02-04 00:41:42.060685790 +0100
+@@ -6,6 +6,7 @@
+ PKGNAME=libncftp
+ VERSION=@LIBNCFTP_VERSION@
+ PREFIX=@prefix@
++LIBDIR=@libdir@
+ 
+ @SET_MAKE@
+ CC=@CC@
