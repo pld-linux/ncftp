@@ -6,10 +6,11 @@ Summary(tr): Güzel arayüzlü bir ftp istemcisi
 Name:        ncftp
 Version:     2.4.3
 Release:     5
+Copyright:   GPL
+Group:       Applications/Networking
+Group(pl):   Aplikacje/Sieæ
 Source0:     ftp://ftp.ncftp.com/pub/ncftp/%{name}-%{version}.tar.gz
 Source1:     ncftp.wmconfig
-Group:       Applications/Networking
-Copyright:   GPL
 BuildRoot:   /tmp/%{name}-%{version}-%{release}-root
 
 %description
