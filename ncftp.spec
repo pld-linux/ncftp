@@ -1,18 +1,16 @@
 Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
-Version:	3.0beta21
-Release:	2
+Version:	3.0.1
+Release:	1
 Copyright:	GPL
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
-Source0:	ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
+Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
 Source1:	ncftp.desktop
-Patch0:		ncftp-noroot.patch
-Patch1:		ncftp-DESTDIR.patch
-Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-30b19-19990719.diff.gz
-Patch3:		ncftp-pld.patch
-Patch4:		ncftp-shared.patch
+Patch0:		ncftp-DESTDIR.patch
+Patch1:		ncftp-shared.patch
+Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-300-v6-20000327.diff
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	ncurses-devel >= 5.0
@@ -33,13 +31,14 @@ serwerów ftp, automatycznie logowaæ siê itp. Ta wersja dodatkowo wspiera IPv6.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p0
-%patch3 -p1
-%patch4 -p1
+%patch2 -p1
 
 %build
-CPPFLAGS="-I/usr/include/ncurses"; export CPPFLAGS
-LDFLAGS="-s"; export LDFLAGS
+cp autoconf/aclocal.m4 .
+autoconf
+CPPFLAGS="-I/usr/include/ncurses"
+LDFLAGS="-s"
+export CPPFLAGS LDFLAGS
 %configure \
 	--enable-ipv6
 
