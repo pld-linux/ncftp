@@ -17,9 +17,8 @@ Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-3181-v6-20040826.diff.gz
-Patch3:		%{name}-lib-makefile.patch
-Patch4:		%{name}-ac25x.patch
-Patch5:		%{name}-libdir.patch
+Patch3:		%{name}-ac25x.patch
+Patch4:		%{name}-libdir.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
@@ -54,8 +53,7 @@ automáticos, e muito mais.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5
+%patch4
 
 %build
 ln -sf autoconf/aclocal.m4 .
