@@ -8,6 +8,6 @@ Commnet[pt]=NcFTP - cliente FTP modo texto
 Commnet[pt_BR]=NcFTP - cliente FTP modo texto
 Exec=ncftp
 Icon=ncftp.png
-Terminal=1
+Terminal=true
 Type=Application
 # vi: encoding=utf-8
