@@ -75,7 +75,8 @@ install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_applnkdir}/Ne
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
 	mandir=$RPM_BUILD_ROOT%{_mandir}
 
-%{__make} -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
+%{__make} -C libncftp soinstall \
+	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/FTP
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
