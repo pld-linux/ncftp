@@ -2,7 +2,7 @@ Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
 Version:	3.0beta18
-Release:	1
+Release:	2
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
 Patch:		%{name}-noroot.patch
 Group:		Applications/Networking
@@ -38,20 +38,25 @@ install -d $RPM_BUILD_ROOT/usr/lib
 make prefix=$RPM_BUILD_ROOT/usr install
 make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT/usr/lib soinstall
 
-bzip2 -9 $RPM_BUILD_ROOT/usr/man/man1/* BETA-README WHATSNEW-3.0
+gzip -9fn $RPM_BUILD_ROOT/usr/man/man1/* BETA-README WHATSNEW-3.0
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc BETA-README.bz2 WHATSNEW-3.0.bz2
+%doc BETA-README.gz WHATSNEW-3.0.gz
 
 %attr(755,root,root) /usr/bin/*
 %attr(755,root,root) /usr/lib/*.so*
-%attr(644,root, man) /usr/man/man1/*
+/usr/man/man1/*
 
 %changelog
+* Fri Apr 23 1999 Maciej Le¶niewski <nimir@kis.p.lodz.pl>
+  [3.0beta18-2]
+- Gzipped docs
+- Removed man group from man pages
+
 * Wed Feb 24 1999 Maciej Le¶niewski <nimir@kis.p.lodz.pl>
   [3.0beta18-1]
 - new version,
