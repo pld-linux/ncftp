@@ -1,7 +1,7 @@
 Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
-Version:	3.0beta19
+Version:	3.0beta21
 Release:	2
 Copyright:	GPL
 Group:		Applications/Networking
@@ -15,7 +15,7 @@ Patch3:		ncftp-pld.patch
 Patch4:		ncftp-shared.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel
-BuildRequires:	ncurses-devel
+BuildRequires:	ncurses-devel >= 5.0
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
