@@ -18,8 +18,8 @@ Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 # based on:	ftp://ftp.kame.net/pub/kame/misc/%{name}-315-v6-20030207.diff.gz
 Patch2:		%{name}-ipv6.patch
-Patch3:		%{name}-sa_len.patch
-Patch4:		%{name}-ac25x.patch
+#Patch3:		%{name}-sa_len.patch
+Patch3:		%{name}-ac25x.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf
 BuildRequires:	ncurses-devel >= 5.0
@@ -54,13 +54,12 @@ automáticos, e muito mais.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
 ln -sf autoconf/aclocal.m4 .
 %{__autoconf}
-CFLAGS="-I/usr/include/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
-CPPFLAGS="-I/usr/include/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
+CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
+CPPFLAGS="-I/usr/include/ncurses"
 %configure \
 	--enable-ncurses \
 	--enable-ipv6
