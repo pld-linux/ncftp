@@ -62,25 +62,3 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
 %{_mandir}/man1/*
-
-%changelog
-* Thu Jun 24 1999 Michal Margula <alchemyx@pld.org.pl>
-  [3.0beta19-1]
-- upgraded to beta19
-- spec corrected for FHS 2.0
-- added BuildPrereq
-
-* Fri Apr 23 1999 Maciej Le¶niewski <nimir@kis.p.lodz.pl>
-  [3.0beta18-2]
-- Gzipped docs
-- Removed man group from man pages
-
-* Wed Feb 24 1999 Maciej Le¶niewski <nimir@kis.p.lodz.pl>
-  [3.0beta18-1]
-- new version,
-- updated noroot-patch,
-- removed strip in %install macro - not needed.
-
-* Mon Jan 04 1999 PLD-team <pld-list@mailbox.tuniv.szczecin.pl>
-  [3.0beta16-2d]
-- build for Linux PLD.
