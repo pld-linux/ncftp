@@ -47,14 +47,14 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},/etc/X11/applnk/Networking}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},/usr/X11R6/share/applnk/Networking}
 
 make DESTDIR=$RPM_BUILD_ROOT install
 make -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/applnk/Networking
+install %{SOURCE1} $RPM_BUILD_ROOT/usr/X11R6/share/applnk/Networking
 
 gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* \
 	BETA-README WHATSNEW-3.0
@@ -68,7 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc BETA-README.gz WHATSNEW-3.0.gz
-/etc/X11/applnk/Networking/ncftp.desktop
+/usr/X11R6/share/applnk/Networking/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
 %{_mandir}/man1/*
