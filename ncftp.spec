@@ -5,7 +5,7 @@ Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente ftp com uma interface agradável
 Name:		ncftp
 Version:	3.1.7
-Release:	2
+Release:	3
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
@@ -71,7 +71,7 @@ CPPFLAGS="-I/usr/include/ncurses"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_applnkdir}/Network/FTP}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_desktopdir}}
 
 %{__make} install \
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
@@ -80,7 +80,7 @@ install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_applnkdir}/Ne
 %{__make} -C libncftp soinstall \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/FTP
+install %{SOURCE1} $RPM_BUILD_ROOT%{_desktopdir}
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 install %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -93,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.txt README.v6 doc/{CHAN*,FIRE*,LICENSE,READLINE,what*}.txt
-%{_applnkdir}/Network/FTP/ncftp.desktop
+%{_desktopdir}/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
 %{_mandir}/man1/*
