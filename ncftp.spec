@@ -2,15 +2,16 @@ Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
 Version:	3.0.1
-Release:	3
+Release:	4
 License:	GPL
 Group:		Applications/Networking
+Group(de):	Applikationen/Netzwerkwesen
 Group(pl):	Aplikacje/Sieciowe
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
-Source1:	ncftp.desktop
-Patch0:		ncftp-DESTDIR.patch
-Patch1:		ncftp-shared.patch
-Patch2:		ncftp-301-v6-20000407.diff.gz
+Source1:	%{name}.desktop
+Patch0:		%{name}-DESTDIR.patch
+Patch1:		%{name}-shared.patch
+Patch2:		%{name}-301-v6-20000407.diff.gz
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	ncurses-devel >= 5.0
@@ -38,8 +39,6 @@ dodatkowo wspiera IPv6.
 cp autoconf/aclocal.m4 .
 autoconf
 CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len"
-LDFLAGS="-s"
-export CPPFLAGS LDFLAGS
 %configure \
 	--enable-ipv6
 
@@ -55,12 +54,9 @@ install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},%{_applnkdir}/Network/FTP}
 
 %{__make} -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
-strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
-
 install %{SOURCE1} $RPM_BUILD_ROOT%{_prefix}/X11R6/share/applnk/Network/FTP
 
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man1/* \
-	WHATSNEW-3.0
+gzip -9nf WHATSNEW-3.0
 
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
