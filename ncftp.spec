@@ -36,7 +36,7 @@ serwerów ftp, automatycznie logowaæ siê itp. Ta wersja dodatkowo wspiera IPv6.
 %build
 cp autoconf/aclocal.m4 .
 autoconf
-CPPFLAGS="-I/usr/include/ncurses"
+CPPFLAGS="-I/usr/include/ncurses -Dss_family=__ss_family -Dss_len=__ss_len"
 LDFLAGS="-s"
 export CPPFLAGS LDFLAGS
 %configure \
@@ -48,7 +48,10 @@ make
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},/usr/X11R6/share/applnk/Networking}
 
-make DESTDIR=$RPM_BUILD_ROOT install
+make \
+	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
+	mandir=$RPM_BUILD_ROOT%{_mandir} \
+	install
 make -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
@@ -56,7 +59,7 @@ strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
 install %{SOURCE1} $RPM_BUILD_ROOT/usr/X11R6/share/applnk/Networking
 
 gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* \
-	BETA-README WHATSNEW-3.0
+	WHATSNEW-3.0
 
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -66,7 +69,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc BETA-README.gz WHATSNEW-3.0.gz
+%doc WHATSNEW-3.0.gz
 /usr/X11R6/share/applnk/Networking/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
