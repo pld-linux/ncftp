@@ -39,7 +39,7 @@ install -d $RPM_BUILD_ROOT/usr/lib
 make prefix=$RPM_BUILD_ROOT/usr install
 make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT/usr/lib soinstall
 
-gzip -9fn $RPM_BUILD_ROOT/usr/man/man1/* BETA-README WHATSNEW-3.0
+gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* BETA-README WHATSNEW-3.0
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -50,7 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(755,root,root) /usr/bin/*
 %attr(755,root,root) /usr/lib/*.so*
-/usr/man/man1/*
+%{_mandir}/man1/*
 
 %changelog
 * Fri Apr 23 1999 Maciej Le¶niewski <nimir@kis.p.lodz.pl>
