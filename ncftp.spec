@@ -5,7 +5,7 @@ Version:	3.0beta19
 Release:	1
 Copyright:	GPL
 Group:		Applications/Networking
-Group(pl):	Aplikacje/Sieæ
+Group(pl):	Aplikacje/Sieciowe
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
 URL:		http://www.ncftp.com
 Patch0:		ncftp-noroot.patch
