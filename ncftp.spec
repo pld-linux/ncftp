@@ -2,7 +2,7 @@ Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
 Version:	3.0.1
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
