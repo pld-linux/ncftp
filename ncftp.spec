@@ -5,13 +5,14 @@ Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente ftp com uma interface agradável
 Name:		ncftp
 Version:	3.0.4
-Release:	4
+Release:	5
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
 Source1:	%{name}.desktop
 Source2:	%{name}.png
+Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 Patch2:		ftp://ftp.kame.net/pub/kame/misc/%{name}-304-v6-20011120.diff.gz
@@ -77,6 +78,7 @@ install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_applnkdir}/Ne
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/FTP
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
+install %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1
 
 gzip -9nf WHATSNEW-3.0 FIREWALL-PROXY-README CHANGELOG LICENSE.txt
 
