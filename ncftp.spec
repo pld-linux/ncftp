@@ -27,7 +27,7 @@ recursive gets, automatic logins, background downloading and much
 more. This version supports IPv6, too.
 
 %description -l pl
-NcFTP jest zaawansowanym klientem ftp. Pozwala na edytowanie lini
+NcFTP jest zaawansowanym klientem ftp. Pozwala na edytowanie linii
 komend, zapamiêtuje komendy, potrafi pobieraæ ca³e katalogi wraz z
 podkatalogami z serwerów ftp, automatycznie logowaæ siê itp. Ta wersja
 dodatkowo wspiera IPv6.
