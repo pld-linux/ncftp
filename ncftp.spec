@@ -1,5 +1,5 @@
 Summary:	Browser program for the File Transfer Protocol
-Summary(de)	NcFTP - ein Textmodus FTP-Client
+Summary(de):	NcFTP - ein Textmodus FTP-Client
 Summary(es):	Cliente ftp con una interface agradable
 Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente ftp com uma interface agradável
