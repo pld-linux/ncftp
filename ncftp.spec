@@ -1,100 +1,90 @@
-Summary:     Browser program for the File Transfer Protocol
-Summary(de): ftp-Client mit einer attraktiven Bedineroberfläche
-Summary(fr): Client ftp avec une interface agréable.
-Summary(pl): Zaawansowany klient FTP
-Summary(tr): Güzel arayüzlü bir ftp istemcisi
-Name:        ncftp
-Version:     2.4.3
-Release:     5
-Copyright:   GPL
-Group:       Applications/Networking
-Group(pl):   Aplikacje/Sieæ
-Source0:     ftp://ftp.ncftp.com/pub/ncftp/%{name}-%{version}.tar.gz
-Source1:     ncftp.wmconfig
-BuildRoot:   /tmp/%{name}-%{version}-%{release}-root
+Summary:	Browser program for the File Transfer Protocol
+Summary(pl):	Zaawansowany klient FTP
+Name:		ncftp
+Version:	3.0beta16
+Release:	2d
+Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
+Patch:		%{name}-noroot.patch
+Group:		Applications/Networking
+Group(pl):	Aplikacje/Sieæ
+Copyright:	GPL
+BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
-Ncftp is a ftp client with many advantageous over the standard one. It
-includes command line editing, command histories, support for recurisive
-gets, automatic logins, and much more.
-
-%description -l de
-Ncftp ist ein ftp-Client mit vielen Verbesserungen. Er enthält Funktionen wie
-Befehlszeilenbearbeitung, Befehlsgeschichte, Unterstützung für rekursive
-Ladevorgänge, automatische Logins, usw.
-
-%description -l fr
-Ncftp est un client ftp possédant de nombreux avantages sur le client
-standard. Il inclue une edition de la ligne de commande, un historique
-des commandes, un support pour des téléchargements récursifs, des logins
-automatiques, et plus encore.
+NcFTP is a ftp client with many advantages over the standard one. It
+includes command line editing, command histories, support for recursive
+gets, automatic logins, background downloading and much more.
 
 %description -l pl
 NcFTP jest zaawansowanym klientem ftp. Pozwala na edytowanie lini komend,
 zapamiêtuje komendy, potrafi pobieraæ ca³e katalogi wraz z podkatalogami z
 serwerów ftp, automatycznie logowaæ siê itp. 
 
-%description -l tr
-Ncftp, standart ftp istemcisine oranla pek çok avantajý olan bir yazýlýmdýr.
-Komut tarihçesi, rekürsif dosya aktarýmý, kendiliðinden sisteme giriþ gibi
-yetenekleri vardýr.
-
 %prep
 %setup -q
+%patch -p1
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s ./configure --prefix=/usr
+CFLAGS=$RPM_OPT_FLAGS LDFLAGS=-s \
+    ./configure \
+	--prefix=/usr
+
+make -C libncftp CFLAGS="$RPM_OPT_FLAGS" shared
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc/X11/wmconfig,usr/{bin,man/man1}}
 
-install -s ncftp $RPM_BUILD_ROOT/usr/bin 
-install ncftp.1 $RPM_BUILD_ROOT/usr/man/man1 
+install -d $RPM_BUILD_ROOT/usr/lib
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/ncftp
+make prefix=$RPM_BUILD_ROOT/usr install
+
+make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT/usr/lib soinstall
+
+strip $RPM_BUILD_ROOT/usr/bin/*
+
+chmod 755 $RPM_BUILD_ROOT/usr/lib/*.so.*
+
+bzip2 -9 $RPM_BUILD_ROOT/usr/man/man1/* BETA-README WHATSNEW-3.0
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(644, root, root, 755)
-%config(missingok) /etc/X11/wmconfig/ncftp
-%attr(755, root, root) /usr/bin/*
-%attr(644, root,  man) /usr/man/man1/*
+%defattr(644,root,root,755)
+%doc BETA-README.bz2 WHATSNEW-3.0.bz2
+
+%attr(755,root,root) /usr/bin/*
+%attr(755,root,root) /usr/lib/*.so*
+%attr(644,root, man) /usr/man/man1/*
 
 %changelog
-* Sun Nov  8 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
-  [2.4.3-1]
-- added Group(pl).
+* Mon Jan 04 1999 PLD-team <pld-list@mailbox.tuniv.szczecin.pl>
+[3.0beta16-2d]
+- build for Linux PLD,
+- major changes.
 
-* Fri Sep 04 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
-- added pl translation.
+* Thu Dec 03 1998 Arne Coucheron <arneco@online.no>
+  [3.0beta16-1]
 
-* Thu Aug 13 1998 Jeff Johnson <jbj@redhat.com>
-- build root
+* Fri Nov 06 1998 Arne Coucheron <arneco@online.no>
+  [3.0beta15-1]
 
-* Fri Apr 24 1998 Prospector System <bugs@redhat.com>
-- translations modified for de, fr, tr
+* Thu Jun 25 1998 Arne Coucheron <arneco@online.no>
+  [3.0beta14-1]
 
-* Wed Apr 08 1998 Cristian Gafton <gafton@redhat.com>
-- compiled for Manhattan
+* Tue Jun 23 1998 Arne Coucheron <arneco@online.no>
+  [3.0beta13-1]
+- small changes to the spec file
 
-* Fri Mar 20 1998 Cristian Gafton <gafton@redhat.com>
-- updated to 2.4.3 for security reasons
+* Sun Jun 07 1998 Arne Coucheron <arneco@online.no>
+  [3.0beta12-1]
+- added -q parameter to %setup
+- using %defattr macro in filelist
+- using %%{name} and %%{version} macros
 
-* Wed Nov 05 1997 Donnie Barnes <djb@redhat.com>
-- added wmconfig entry
+* Tue May 12 1998 Arne Coucheron <arneco@online.no>
+  [3.0beta11-1]
 
-* Wed Oct 21 1997 Cristian Gafton <gafton@redhat.com>
-- fixed the spec file
-
-* Fri Oct 10 1997 Erik Troan <ewt@redhat.com>
-- updated to ncftp 2.4.2
-
-* Thu Jul 10 1997 Erik Troan <ewt@redhat.com>
-- built against glibc
-
-* Tue Mar 25 1997 Donnie Barnes <djb@redhat.com>
-- Rebuild as Sun version didn't work.
+* Mon May 04 1998 Arne Coucheron <arneco@online.no>
+  [3.0beta10-1]
