@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=ncftp
+Comment=NcFTP - a text mode FTP client
+Exec=/usr/X11R6/bin/xterm -e ncftp &
+Terminal=0
+Type=Application
