@@ -5,7 +5,8 @@ Version:	3.0beta19
 Release:	1
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
 URL:		http://www.ncftp.com
-Patch:		ncftp-noroot.patch
+Patch0:		ncftp-noroot.patch
+Patch1:		ncftp-DESTDIR.patch
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieæ
 Copyright:	GPL
@@ -24,16 +25,19 @@ zapamiêtuje komendy, potrafi pobieraæ ca³e katalogi wraz z podkatalogami z
 serwerów ftp, automatycznie logowaæ siê itp. 
 
 %prep
-%setup -q
-%patch -p1
+%setup  -q
+%patch0 -p1
+%patch1 -p1
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
-./configure %{_target_platform} \
-	--prefix=/usr		\
-	--mandir=$RPM_BUILD_ROOT/usr/share/man
+#cp autoconf/* .
+#aclocal
+#autoconf
+CPPFLAGS="-I/usr/include/ncurses"; export CPPFLAGS
+LDFLAGS="-s"; export LDFLAGS
+%configure 
 
-make -C libncftp CFLAGS="$RPM_OPT_FLAGS" shared
+make -C libncftp shared
 make
 
 %install
@@ -41,10 +45,15 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_libdir}
 install -d $RPM_BUILD_ROOT%{_mandir}
 
-make prefix=$RPM_BUILD_ROOT/usr install
-make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT%{_libdir} soinstall
+make DESTDIR=$RPM_BUILD_ROOT install
+make -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
+
+strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
 
 gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* BETA-README WHATSNEW-3.0
+
+%post   -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -54,7 +63,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc BETA-README.gz WHATSNEW-3.0.gz
 
 %attr(755,root,root) %{_bindir}/*
-%attr(755,root,root) %{_libdir}/*.so*
+%attr(755,root,root) %{_libdir}/*.so.*
 %{_mandir}/man1/*
 
 %changelog
@@ -76,31 +85,5 @@ rm -rf $RPM_BUILD_ROOT
 - removed strip in %install macro - not needed.
 
 * Mon Jan 04 1999 PLD-team <pld-list@mailbox.tuniv.szczecin.pl>
-[3.0beta16-2d]
+  [3.0beta16-2d]
 - build for Linux PLD,
-- major changes.
-
-* Thu Dec 03 1998 Arne Coucheron <arneco@online.no>
-  [3.0beta16-1]
-
-* Fri Nov 06 1998 Arne Coucheron <arneco@online.no>
-  [3.0beta15-1]
-
-* Thu Jun 25 1998 Arne Coucheron <arneco@online.no>
-  [3.0beta14-1]
-
-* Tue Jun 23 1998 Arne Coucheron <arneco@online.no>
-  [3.0beta13-1]
-- small changes to the spec file
-
-* Sun Jun 07 1998 Arne Coucheron <arneco@online.no>
-  [3.0beta12-1]
-- added -q parameter to %setup
-- using %defattr macro in filelist
-- using %%{name} and %%{version} macros
-
-* Tue May 12 1998 Arne Coucheron <arneco@online.no>
-  [3.0beta11-1]
-
-* Mon May 04 1998 Arne Coucheron <arneco@online.no>
-  [3.0beta10-1]
