@@ -6,3 +6,4 @@ Commnet[pt]=NcFTP - cliente FTP modo texto
 Exec=ncftp
 Terminal=1
 Type=Application
+# vi: encoding=utf-8
