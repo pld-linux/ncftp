@@ -12,7 +12,7 @@ Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
 Source1:	%{name}.desktop
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-Patch2:		%{name}-302-v6-20001225.diff.gz
+#Patch2:		%{name}-302-v6-20001225.diff.gz
 Patch3:		%{name}-sa_len.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
@@ -36,7 +36,7 @@ dodatkowo wspiera IPv6.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+#%patch2 -p1
 %patch3 -p1
 
 %build
