@@ -7,12 +7,12 @@ Copyright:	GPL
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
-URL:		http://www.ncftp.com
 Patch0:		ncftp-noroot.patch
 Patch1:		ncftp-DESTDIR.patch
 Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-30b19-19990719.diff.gz
 Patch3:		ncftp-pld.patch
 Patch4:		ncftp-shared.patch
+URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel
 BuildRequires:	ncurses-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
@@ -39,7 +39,8 @@ serwerów ftp, automatycznie logowaæ siê itp. Ta wersja dodatkowo wspiera IPv6.
 %build
 CPPFLAGS="-I/usr/include/ncurses"; export CPPFLAGS
 LDFLAGS="-s"; export LDFLAGS
-%configure --enable-ipv6
+%configure \
+	--enable-ipv6
 
 make
 
