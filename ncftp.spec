@@ -1,8 +1,8 @@
 Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
-Version:	3.0.2
-Release:	3
+Version:	3.0.3
+Release:	1
 Epoch:		2
 License:	GPL
 Group:		Applications/Networking
@@ -12,7 +12,7 @@ Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
 Source1:	%{name}.desktop
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-Patch2:		%{name}-302-v6-20001225.diff.gz
+#Patch2:		%{name}-302-v6-20001225.diff.gz
 Patch3:		%{name}-sa_len.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
@@ -36,7 +36,7 @@ dodatkowo wspiera IPv6.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+#%patch2 -p1
 %patch3 -p1
 
 %build
@@ -47,7 +47,7 @@ CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{r
 export CPPFLAGS
 %configure \
 	--enable-ncurses \
-	--enable-ipv6
+#	--enable-ipv6
 
 %{__make}
 
