@@ -82,8 +82,6 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/FTP
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 install %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1
 
-gzip -9nf WHATSNEW-3.0 FIREWALL-PROXY-README CHANGELOG LICENSE.txt
-
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -92,7 +90,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc WHATSNEW-3.0 FIREWALL-PROXY-README CHANGELOG LICENSE.txt
 %{_applnkdir}/Network/FTP/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
