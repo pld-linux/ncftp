@@ -5,18 +5,18 @@ Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente FTP com uma interface agradável
 Name:		ncftp
 Version:	3.1.8
-Release:	1
+Release:	3
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	be0a2818ece057da3fb1584fa4ab87f5
+# Source0-md5:	dd5f47c72b6958fdb652355fb9bdb70c
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-318-v6-20040720b.diff.gz
+Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-3181-v6-20040826.diff.gz
 Patch3:		%{name}-lib-makefile.patch
 Patch4:		%{name}-ac25x.patch
 Patch5:		%{name}-libdir.patch
