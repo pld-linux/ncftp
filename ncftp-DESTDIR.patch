@@ -1,7 +1,7 @@
-diff -Nru ncftp-3.1.5/libncftp/Makefile.in ncftp-3.1.5.new/libncftp/Makefile.in
---- ncftp-3.1.5/libncftp/Makefile.in	Fri Apr  7 08:44:56 2000
-+++ ncftp-3.1.5.new/libncftp/Makefile.in	Fri Apr  7 08:46:02 2000
-@@ -60,21 +60,21 @@
+diff -Nru ncftp-3.1.6/libncftp/Makefile.in ncftp-3.1.6.new/libncftp/Makefile.in
+--- ncftp-3.1.6/libncftp/Makefile.in	Fri Apr  7 08:44:56 2000
++++ ncftp-3.1.6.new/libncftp/Makefile.in	Fri Apr  7 08:46:02 2000
+@@ -60,22 +60,22 @@
  	-@/bin/ls -l $(LIBSOS) $(LIBSO)
  
  soinstall: $(LIBSO)
@@ -22,6 +22,7 @@ diff -Nru ncftp-3.1.5/libncftp/Makefile.in ncftp-3.1.5.new/libncftp/Makefile.in
 -	[ -d "$(PREFIX)/lib" ] || mkdir -m 755 "$(PREFIX)/lib"
 -	[ -d "$(PREFIX)/include" ] || mkdir -m 755 "$(PREFIX)/include"
 -	cp $(LIB) $(PREFIX)/lib/$(LIB)
+-	-@@RANLIB@ $(PREFIX)/lib/$(LIB)
 -	cp ncftp.h ncftp_errno.h $(PREFIX)/include
 -	-chmod a+r $(LIB) $(PREFIX)/lib/$(LIB) $(PREFIX)/include/ncftp.h $(PREFIX)/include/ncftp_errno.h
 -	( cd ../sio ; $(MAKE) "PREFIX=$(PREFIX)" install)
@@ -29,6 +30,7 @@ diff -Nru ncftp-3.1.5/libncftp/Makefile.in ncftp-3.1.5.new/libncftp/Makefile.in
 +	[ -d "$(DESTDIR)$(PREFIX)/lib" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/lib"
 +	[ -d "$(DESTDIR)$(PREFIX)/include" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/include"
 +	cp $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB)
++	-@@RANLIB@ $(DESTDIR)$(PREFIX)/lib/$(LIB)
 +	cp ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
 +	-chmod a+r $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
 +	( cd ../sio ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install)
