@@ -5,12 +5,13 @@ Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente ftp com uma interface agradável
 Name:		ncftp
 Version:	3.0.4
-Release:	3
+Release:	4
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
 Source1:	%{name}.desktop
+Source2:	%{name}.png
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 Patch2:		ftp://ftp.kame.net/pub/kame/misc/%{name}-304-v6-20011120.diff.gz
@@ -66,7 +67,7 @@ export CPPFLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},%{_applnkdir}/Network/FTP}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_applnkdir}/Network/FTP}
 
 %{__make} install \
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
@@ -75,6 +76,7 @@ install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},%{_applnkdir}/Network/FTP}
 %{__make} -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/FTP
+install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 gzip -9nf WHATSNEW-3.0 FIREWALL-PROXY-README CHANGELOG LICENSE.txt
 
@@ -91,3 +93,4 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
 %{_mandir}/man1/*
+%{_pixmapsdir}/ncftp.png
