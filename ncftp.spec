@@ -58,7 +58,7 @@ automáticos, e muito mais.
 
 %build
 cp -f autoconf/aclocal.m4 .
-autoconf
+%{__autoconf}
 CFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
 CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
 export CPPFLAGS
