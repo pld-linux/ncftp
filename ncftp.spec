@@ -2,7 +2,7 @@ Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
 Version:	3.0.1
-Release:	1
+Release:	2
 Copyright:	GPL
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
@@ -46,7 +46,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},/usr/X11R6/share/applnk/Networking}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},/usr/X11R6/share/applnk/Network/FTP}
 
 make \
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
@@ -56,7 +56,7 @@ make -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
 
-install %{SOURCE1} $RPM_BUILD_ROOT/usr/X11R6/share/applnk/Networking
+install %{SOURCE1} $RPM_BUILD_ROOT/usr/X11R6/share/applnk/Network/FTP
 
 gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* \
 	WHATSNEW-3.0
@@ -70,7 +70,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc WHATSNEW-3.0.gz
-/usr/X11R6/share/applnk/Networking/ncftp.desktop
+/usr/X11R6/share/applnk/Network/FTP/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
 %{_mandir}/man1/*
