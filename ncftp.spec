@@ -9,8 +9,6 @@ Release:	3
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(pl):	Aplikacje/Sieciowe
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
 Source1:	%{name}.desktop
 Patch0:		%{name}-DESTDIR.patch
