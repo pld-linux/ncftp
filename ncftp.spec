@@ -4,7 +4,7 @@ Name:		ncftp
 Version:	3.0beta18
 Release:	2
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
-Patch:		%{name}-noroot.patch
+Patch:		ncftp-noroot.patch
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieæ
 Copyright:	GPL
@@ -25,8 +25,8 @@ serwerów ftp, automatycznie logowaæ siê itp.
 %patch -p1
 
 %build
-CFLAGS=$RPM_OPT_FLAGS LDFLAGS=-s \
-    ./configure \
+CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
+./configure \
 	--prefix=/usr
 
 make -C libncftp CFLAGS="$RPM_OPT_FLAGS" shared
@@ -35,6 +35,7 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/usr/lib
+
 make prefix=$RPM_BUILD_ROOT/usr install
 make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT/usr/lib soinstall
 
