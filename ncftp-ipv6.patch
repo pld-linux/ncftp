@@ -1,10 +1,85 @@
-diff -urN ncftp-3.0.4.orig/configure.in ncftp-3.0.4/configure.in
---- ncftp-3.0.4.orig/configure.in	Thu Oct 25 23:57:48 2001
-+++ ncftp-3.0.4/configure.in	Thu Nov  8 09:35:26 2001
-@@ -195,6 +195,228 @@
- 	fi
- fi
+Index: ncftp3/README.v6
+diff -u /dev/null ncftp3/README.v6:1.1
+--- /dev/null	Fri Feb  7 10:02:32 2003
++++ ncftp3/README.v6	Tue Aug  6 14:06:35 2002
+@@ -0,0 +1,2 @@
++If you have problem/trouble/suggestion for IPv6 related code,
++Please contact to core@kame.net
+Index: ncftp3/config.h.in
+diff -u ncftp3/config.h.in:1.1.1.9 ncftp3/config.h.in:1.11
+--- ncftp3/config.h.in:1.1.1.9	Thu May 30 23:40:29 2002
++++ ncftp3/config.h.in	Mon Jun 17 03:02:32 2002
+@@ -222,6 +222,9 @@
+ /* Define if you have the doupdate function.  */
+ #undef HAVE_DOUPDATE
  
++/* Define if you have the getaddrinfo function.  */
++#undef HAVE_GETADDRINFO
++
+ /* Define if you have the fstat64 function.  */
+ #undef HAVE_FSTAT64
+ 
+@@ -243,6 +246,9 @@
+ /* Define if you have the gethostname function.  */
+ #undef HAVE_GETHOSTNAME
+ 
++/* Define if you have the getaddrname function.  */
++#undef HAVE_GETNAMEINFO
++
+ /* Define if you have the getlogin_r function.  */
+ #undef HAVE_GETLOGIN_R
+ 
+@@ -342,6 +348,9 @@
+ /* Define if you have the snprintf function.  */
+ #undef HAVE_SNPRINTF
+ 
++/* Define if sockaddr has sa_len member */
++#undef HAVE_SOCKADDR_SA_LEN
++
+ /* Define if you have the stat64 function.  */
+ #undef HAVE_STAT64
+ 
+@@ -488,3 +497,19 @@
+ 
+ /* Define if you have the socket library (-lsocket).  */
+ #undef HAVE_LIBSOCKET
++
++/* Define if you have the socks5 library (-lsocks5).  */
++#undef HAVE_LIBSOCKS5
++
++/* Define if you want IPv6 support. */
++#undef ENABLE_IPV6
++
++/* Define if sockaddr has sa_len member */
++#undef HAVE_SOCKADDR_SA_LEN
++
++/* Define if sockaddr_storage has ss_family member */
++#undef HAVE_SOCKADDR_STORAGE_SS_FAMILY
++
++/* Define if sockaddr_storage has __ss_family member */
++#undef HAVE_SOCKADDR_STORAGE___SS_FAMILY
++
+Index: ncftp3/configure.in
+diff -u ncftp3/configure.in:1.1.1.9 ncftp3/configure.in:1.18
+--- ncftp3/configure.in:1.1.1.9	Sat Jul  6 10:54:41 2002
++++ ncftp3/configure.in	Tue Jul  9 15:08:49 2002
+@@ -10,8 +10,6 @@
+ dnl AC_ARG_WITH(readline,[  --without-readline      do not try to find and use the readline library],nc_cv_readline=$withval,nc_cv_readline=yes)
+ wi_ARG_WITH_SOCKS5
+ 
+-
+-
+ dnl ---------------------------------------------------------------------------
+ dnl Environment and compiler settings.
+ dnl ---------------------------------------------------------------------------
+@@ -98,6 +96,172 @@
+ wi_HEADER_SYS_SELECT_H	dnl				# sio
+ 
+ 
++dnl ---------------------------------------------------------------------------
++dnl Checks for IPv6.
++dnl ---------------------------------------------------------------------------
++dnl
 +AC_MSG_CHECKING([whether to enable ipv6])
 +AC_ARG_ENABLE(ipv6,
 +[  --enable-ipv6		Enable ipv6 (with ipv4) support
@@ -26,7 +101,6 @@ diff -urN ncftp-3.0.4.orig/configure.in ncftp-3.0.4/configure.in
 +#include <sys/socket.h>
 +main()
 +{
-+  exit(0);
 + if (socket(AF_INET6, SOCK_STREAM, 0) < 0)
 +   exit(1);
 + else
@@ -42,77 +116,12 @@ diff -urN ncftp-3.0.4.orig/configure.in ncftp-3.0.4/configure.in
 +  ipv6=no
 +))
 +
-+AC_ARG_WITH(ipv6-includes,
-+[  --with-ipv6-includes=DIR Search for IPv6 header files in DIR])
-+test -n "${with_ipv6_includes}" && CFLAGS="-I${with_ipv6_includes} $CFLAGS"
-+AC_ARG_WITH(ipv6-libraries,
-+[  --with-ipv6-libraries=DIR Search for IPv6 libraries in DIR])
-+test -n "${with_ipv6_libraries}" && LDFLAGS="-L${with_ipv6_libraries} $LDFLAGS"
-+AC_ARG_WITH(ipv6-libname,
-+[  --with-ipv6-libname=NAME library name for IPv6])
-+test -n "${with_ipv6_libname}" && LIBS="$LIBS -l${with_ipv6_libname}"
++AC_CHECK_FUNC(getnameinfo, [
++  AC_DEFINE(HAVE_GETNAMEINFO)], [
++  LIBOBJS="$LIBOBJS getnameinfo.o"
++  LIBSOBJS="$LIBSOBJS getnameinfo.so"
++])
 +
-+AC_CHECK_FUNC(getnameinfo)
-+AC_CHECK_FUNC(getaddrinfo)
-+
-+# check if sockaddr has sa_len member
-+AC_MSG_CHECKING(if sockaddr has sa_len member)
-+AC_TRY_COMPILE([#include <sys/types.h>
-+#include <sys/socket.h>],
-+[struct sockaddr x;
-+x.sa_len = 0;],
-+       AC_MSG_RESULT(yes)
-+       AC_DEFINE(HAVE_SOCKADDR_SA_LEN),
-+       AC_MSG_RESULT(no))
-+
-+AC_MSG_CHECKING([whether to enable ipv6])
-+AC_ARG_ENABLE(ipv6,
-+[  --enable-ipv6		Enable ipv6 (with ipv4) support
-+  --disable-ipv6		Disable ipv6 support],
-+[ case "$enableval" in
-+  no)
-+       AC_MSG_RESULT(no)
-+       ipv6=no
-+       ;;
-+  *)   AC_MSG_RESULT(yes)
-+       AC_DEFINE(ENABLE_IPV6)
-+       ipv6=yes
-+       ;;
-+  esac ],
-+
-+  AC_TRY_RUN([ /* AF_INET6 avalable check */
-+#define INET6
-+#include <sys/types.h>
-+#include <sys/socket.h>
-+main()
-+{
-+  exit(0);
-+ if (socket(AF_INET6, SOCK_STREAM, 0) < 0)
-+   exit(1);
-+ else
-+   exit(0);
-+}
-+],
-+  AC_MSG_RESULT(yes)
-+  AC_DEFINE(ENABLE_IPV6)
-+  ipv6=yes,
-+  AC_MSG_RESULT(no)
-+  ipv6=no,
-+  AC_MSG_RESULT(no)
-+  ipv6=no
-+))
-+
-+AC_ARG_WITH(ipv6-includes,
-+[  --with-ipv6-includes=DIR Search for IPv6 header files in DIR])
-+test -n "${with_ipv6_includes}" && CFLAGS="-I${with_ipv6_includes} $CFLAGS"
-+AC_ARG_WITH(ipv6-libraries,
-+[  --with-ipv6-libraries=DIR Search for IPv6 libraries in DIR])
-+test -n "${with_ipv6_libraries}" && LDFLAGS="-L${with_ipv6_libraries} $LDFLAGS"
-+AC_ARG_WITH(ipv6-libname,
-+[  --with-ipv6-libname=NAME library name for IPv6])
-+test -n "${with_ipv6_libname}" && LIBS="$LIBS -l${with_ipv6_libname}"
-+
-+AC_CHECK_FUNC(getnameinfo)
 +AC_CHECK_FUNC(getaddrinfo, [
 +AC_MSG_CHECKING(getaddrinfo bug)
 +AC_TRY_RUN([
@@ -162,10 +171,10 @@ diff -urN ncftp-3.0.4.orig/configure.in ncftp-3.0.4/configure.in
 +        inet4++;
 +        break;
 +      case AF_INET6:
-+       if (strcmp(strport, "54321") != 0) {
++        if (strcmp(strport, "54321") != 0) {
 +	  goto bad;
-+       }
-+       if (passive) {
++	}
++        if (passive) {
 +          if (strcmp(straddr, "::") != 0) {
 +            goto bad;
 +          }
@@ -200,21 +209,14 @@ diff -urN ncftp-3.0.4.orig/configure.in ncftp-3.0.4/configure.in
 +    freeaddrinfo(aitop);
 +  exit(1);
 +}
-+],
-+AC_MSG_RESULT(good)
-+buggygetaddrinfo=no,
-+AC_MSG_RESULT(buggy)
-+buggygetaddrinfo=yes,
-+AC_MSG_RESULT(buggy)
-+buggygetaddrinfo=yes)
-+
-+if test "$buggygetaddrinfo" = "yes"; then
-+	if test "$ipv6" = "yes"; then
-+		echo 'Fatal: You must get working getaddrinfo() function.'
-+		echo '       or you can specify "--disable-ipv6"'.
-+		exit 1
-+	fi
-+fi
++], [
++  AC_MSG_RESULT(good)
++  AC_DEFINE(HAVE_GETADDRINFO)], [
++  AC_MSG_RESULT(buggy)
++  LIBOBJS="$LIBOBJS getaddrinfo.o"
++  LIBSOBJS="$LIBSOBJS getaddrinfo.so"])], [
++  LIBOBJS="$LIBOBJS getaddrinfo.o"
++  LIBSOBJS="$LIBSOBJS getaddrinfo.so"
 +])
 +
 +# check if sockaddr has sa_len member
@@ -227,76 +229,250 @@ diff -urN ncftp-3.0.4.orig/configure.in ncftp-3.0.4/configure.in
 +       AC_DEFINE(HAVE_SOCKADDR_SA_LEN),
 +       AC_MSG_RESULT(no))
 +
- CPPFLAGS="-I$MAINDIR $CPPFLAGS"
++# check if sockaddr_storage has ss_family member
++AC_MSG_CHECKING(if sockaddr_storage has ss_family member)
++AC_TRY_COMPILE([#include <sys/types.h>
++#include <sys/socket.h>],
++[struct sockaddr_storage x;
++x.__ss_family = 0;],
++	AC_MSG_RESULT(yes)
++	AC_DEFINE(HAVE_SOCKADDR_STORAGE_SS_FAMILY),
++	AC_MSG_RESULT(no)
++	AC_DEFINE(HAVE_SOCKADDR_STORAGE___SS_FAMILY)
++	CPPFLAGS="$CPPFLAGS -D__ss_family=ss_family -D__ss_len=ss_len")
++
++CPPFLAGS="-I$MAINDIR $CPPFLAGS"
  
- if test "$no_signals" = no ; then
-diff -urN ncftp-3.0.4.orig/libncftp/config.h.in ncftp-3.0.4/libncftp/config.h.in
---- ncftp-3.0.4.orig/libncftp/config.h.in	Mon Oct 22 19:52:29 2001
-+++ ncftp-3.0.4/libncftp/config.h.in	Thu Nov  8 10:10:34 2001
-@@ -219,3 +219,6 @@
+ dnl ---------------------------------------------------------------------------
+ dnl Checks for library functions.
+@@ -218,6 +382,8 @@
+ AC_SUBST(MAKE)
+ AC_SUBST(Z30)
+ AC_SUBST(LIBSET)
++AC_SUBST(LIBOBJS)
++AC_SUBST(LIBSOBJS)
+ AC_SUBST(MAINDIR)
+ AC_SUBST(NCFTP_VERSION)
+ AC_SUBST(LIBNCFTP_VERSION)
+Index: ncftp3/Strn/tester
+Index: ncftp3/autoconf/acconfig.h
+diff -u ncftp3/autoconf/acconfig.h:1.1.1.8 ncftp3/autoconf/acconfig.h:1.5
+--- ncftp3/autoconf/acconfig.h:1.1.1.8	Sun Jan 12 11:26:09 2003
++++ ncftp3/autoconf/acconfig.h	Sun Jan 12 11:45:18 2003
+@@ -224,6 +224,24 @@
+ /* Define if you have the wait3 system call.  */
+ #undef HAVE_WAIT3
  
- /* Define if you have the socks5 library (-lsocks5).  */
- #undef HAVE_LIBSOCKS5
++/* Define if you have the getaddrinfo function.  */
++#undef HAVE_GETADDRINFO
++
++/* Define if you have the getaddrname function.  */
++#undef HAVE_GETNAMEINFO
++
++/* Define if sockaddr has sa_len member */
++#undef HAVE_SOCKADDR_SA_LEN
++
++/* Define if sockaddr_storage has ss_family member */
++#undef HAVE_SOCKADDR_STORAGE_SS_FAMILY
++
++/* Define if sockaddr_storage has __ss_family member */
++#undef HAVE_SOCKADDR_STORAGE___SS_FAMILY
 +
 +/* Define if you want IPv6 support. */
 +#undef ENABLE_IPV6
-diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
---- ncftp-3.0.4.orig/libncftp/ftp.c	Mon Oct 15 10:29:46 2001
-+++ ncftp-3.0.4/libncftp/ftp.c	Thu Nov  8 10:07:45 2001
-@@ -43,6 +43,7 @@
++
+ /* Define as __inline if that's what the C compiler calls it.  */
+ #undef inline
  
- 
- 
-+#ifndef ENABLE_IPV6
- /* On entry, you should have 'host' be set to a symbolic name (like
-  * cse.unl.edu), or set to a numeric address (like 129.93.3.1).
-  * If the function fails, it will return NULL, but if the host was
-@@ -72,6 +73,7 @@
- 		*ip_address = ip;
- 	return (hp);
- }	/* GetHostEntry */
+Index: ncftp3/libncftp/addrinfo.h
+diff -u /dev/null ncftp3/libncftp/addrinfo.h:1.2
+--- /dev/null	Fri Feb  7 10:02:34 2003
++++ ncftp3/libncftp/addrinfo.h	Tue Nov 20 02:53:11 2001
+@@ -0,0 +1,104 @@
++/*
++ * Copyright (C) 1995, 1996, 1997, 1998, and 1999 WIDE Project.
++ * All rights reserved.
++ * 
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the project nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ * 
++ * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++#ifndef HAVE_GETADDRINFO
++
++/*
++ * Error return codes from getaddrinfo()
++ */
++#define	EAI_ADDRFAMILY	 1	/* address family for hostname not supported */
++#define	EAI_AGAIN	 2	/* temporary failure in name resolution */
++#define	EAI_BADFLAGS	 3	/* invalid value for ai_flags */
++#define	EAI_FAIL	 4	/* non-recoverable failure in name resolution */
++#define	EAI_FAMILY	 5	/* ai_family not supported */
++#define	EAI_MEMORY	 6	/* memory allocation failure */
++#define	EAI_NODATA	 7	/* no address associated with hostname */
++#define	EAI_NONAME	 8	/* hostname nor servname provided, or not known */
++#define	EAI_SERVICE	 9	/* servname not supported for ai_socktype */
++#define	EAI_SOCKTYPE	10	/* ai_socktype not supported */
++#define	EAI_SYSTEM	11	/* system error returned in errno */
++#define EAI_BADHINTS	12
++#define EAI_PROTOCOL	13
++#define EAI_MAX		14
++
++/*
++ * Flag values for getaddrinfo()
++ */
++#define	AI_PASSIVE	0x00000001 /* get address to use bind() */
++#define	AI_CANONNAME	0x00000002 /* fill ai_canonname */
++#define	AI_NUMERICHOST	0x00000004 /* prevent name resolution */
++/* valid flags for addrinfo */
++#define	AI_MASK		(AI_PASSIVE | AI_CANONNAME | AI_NUMERICHOST)
++
++#define	AI_ALL		0x00000100 /* IPv6 and IPv4-mapped (with AI_V4MAPPED) */
++#define	AI_V4MAPPED_CFG	0x00000200 /* accept IPv4-mapped if kernel supports */
++#define	AI_ADDRCONFIG	0x00000400 /* only if any address is assigned */
++#define	AI_V4MAPPED	0x00000800 /* accept IPv4-mapped IPv6 address */
++/* special recommended flags for getipnodebyname */
++#define	AI_DEFAULT	(AI_V4MAPPED_CFG | AI_ADDRCONFIG)
++
++/*
++ * Constants for getnameinfo()
++ */
++#define	NI_MAXHOST	1025
++#define	NI_MAXSERV	32
++
++/*
++ * Flag values for getnameinfo()
++ */
++#define	NI_NOFQDN	0x00000001
++#define	NI_NUMERICHOST	0x00000002
++#define	NI_NAMEREQD	0x00000004
++#define	NI_NUMERICSERV	0x00000008
++#define	NI_DGRAM	0x00000010
++
++struct addrinfo {
++	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
++	int	ai_family;	/* PF_xxx */
++	int	ai_socktype;	/* SOCK_xxx */
++	int	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
++	size_t	ai_addrlen;	/* length of ai_addr */
++	char	*ai_canonname;	/* canonical name for hostname */
++	struct sockaddr *ai_addr;	/* binary address */
++	struct addrinfo *ai_next;	/* next structure in linked list */
++};
++
++struct sockaddr_storage {
++#ifdef HAVE_SOCKADDR_SA_LEN
++	u_int8_t	ss_len;		/* address length */
++	u_int8_t	ss_family;	/* address family */
++#else
++	u_int16_t	ss_family;
 +#endif
++	u_int8_t fill[126];
++};
++
++extern void freehostent __P((struct hostent *));
++extern char *gai_strerror __P((int));
++#endif
+Index: ncftp3/libncftp/ftp.c
+diff -u ncftp3/libncftp/ftp.c:1.1.1.12 ncftp3/libncftp/ftp.c:1.45
+--- ncftp3/libncftp/ftp.c:1.1.1.12	Sat Jul  6 10:54:46 2002
++++ ncftp3/libncftp/ftp.c	Mon Jan 20 08:17:10 2003
+@@ -48,6 +48,17 @@
+ #	define DisposeSocket(a) close(a)
+ #endif
  
++#ifndef HAVE_SOCKADDR_SA_LEN
++#ifndef SA_LEN
++#ifdef ENABLE_IPV6
++#define SA_LEN(x) (((x)->sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) \
++		: (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) \
++		: -1))
++#else  /* ENABLE_IPV6 */
++#define SA_LEN(x) (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : -1)
++#endif /* ENABLE_IPV6 */
++#endif /* SA_LEN */
++#endif /* HAVE_SOCKADDR_SA_LEN */
  
- 
-@@ -219,9 +221,13 @@
+ void
+ CloseControlConnection(const FTPCIPtr cip)
+@@ -75,9 +86,9 @@
  
  
  static int
 -GetSocketAddress(const FTPCIPtr cip, int sockfd, struct sockaddr_in *saddr)
 +GetSocketAddress(const FTPCIPtr cip, int sockfd, struct sockaddr *saddr)
  {
-+#ifdef ENABLE_IPV6
-+	int len = (int) sizeof (struct sockaddr_storage);
-+#else
- 	int len = (int) sizeof (struct sockaddr_in);
-+#endif
+-	sockaddr_size_t len = (sockaddr_size_t) sizeof (struct sockaddr_in);
++	sockaddr_size_t len = (sockaddr_size_t) sizeof (struct sockaddr_storage);
  	int result = 0;
  
  	if (getsockname(sockfd, (struct sockaddr *)saddr, &len) < 0) {
-@@ -354,7 +360,16 @@
+@@ -111,16 +122,16 @@
+ int
+ OpenControlConnection(const FTPCIPtr cip, char *host, unsigned int port)
+ {
+-	struct in_addr ip_address;
+ 	int err = 0;
+ 	int result;
+ 	int oerrno;
+ 	volatile int sockfd = -1;
  	volatile int sock2fd = -1;
  	ResponsePtr rp;
- 	char **volatile curaddr;
-+#ifdef ENABLE_IPV6
+-	char **volatile curaddr;
+-	int hpok;
+-	struct hostent hp;
 +	struct addrinfo hints;
 +	struct addrinfo *res, *res0;
-+	struct sockaddr_in *sin;
-+	struct sockaddr_in6 *sin6;
 +	int error;
 +	char buf[NI_MAXHOST];
-+#else
- 	struct hostent *hp;
-+#endif
  	char *volatile fhost;
  	unsigned int fport;
  #ifndef NO_SIGNALS
-@@ -388,7 +403,21 @@
+@@ -154,27 +165,17 @@
  	cip->cin = NULL;
  	cip->cout = NULL;
  
 -	/* Make sure we use network byte-order. */
-+#ifdef ENABLE_IPV6
+-	fport = (unsigned int) htons((unsigned short) fport);
+-
+-	cip->servCtlAddr.sin_port = (unsigned short) fport;
+-
+-	if (GetHostEntry(&hp, fhost, &ip_address, cip->buf, cip->bufSize) != 0) {
+-		hpok = 0;
+-		/* Okay, no Host entry, but maybe we have a numeric address
+-		 * in ip_address we can try.
+-		 */
+-		if (ip_address.s_addr == INADDR_NONE) {
+-			FTPLogError(cip, kDontPerror, "%s: unknown host.\n", fhost);
+-			cip->errNo = kErrHostUnknown;
+-			return (kErrHostUnknown);
+-		}
+-		cip->servCtlAddr.sin_family = AF_INET;
+-		cip->servCtlAddr.sin_addr.s_addr = ip_address.s_addr;
+-	} else {
+-		hpok = 1;
+-		cip->servCtlAddr.sin_family = hp.h_addrtype;
+-		/* We'll fill in the rest of the structure below. */
 +	memset(&hints, 0, sizeof(hints));
 +	hints.ai_flags = AI_CANONNAME;
 +	hints.ai_family = PF_UNSPEC;
@@ -305,93 +481,189 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +	sprintf(buf, "%d\0", fport);
 +	error = getaddrinfo(fhost, buf, &hints, &res0);
 +	if (error) {
-+		Error(cip, kDontPerror, "%s: %s.\n", fhost, gai_strerror(error));
++		FTPLogError(cip, kDontPerror, "%s: %s.\n", fhost, gai_strerror(error));
 +		cip->errNo = kErrHostUnknown;
 +		return (kErrHostUnknown);
-+	}
-+#else
-+ 	/* Make sure we use network byte-order. */
- 	fport = (unsigned int) htons((unsigned short) fport);
- 
- 	cip->servCtlAddr.sin_port = (unsigned short) fport;
-@@ -410,6 +439,7 @@
- 		cip->servCtlAddr.sin_family = hp->h_addrtype;
- 		/* We'll fill in the rest of the structure below. */
  	}
-+#endif
  	
  	/* After obtaining a socket, try to connect it to a remote
- 	 * address.  If we didn't get a host entry, we will only have
-@@ -417,6 +447,7 @@
+@@ -183,13 +184,14 @@
  	 * every address in the list from the host entry.
  	 */
  
-+#ifndef ENABLE_IPV6
- 	if (hp == NULL) {
- 		/* Since we're given a single raw address, and not a host entry,
- 		 * we can only try this one address and not any other addresses
-@@ -499,9 +530,19 @@
- 		}
- #endif	/* NO_SIGNALS */
- 	} else {
-+#endif
- 		/* We can try each address in the list.  We'll quit when we
- 		 * run out of addresses to try or get a successful connection.
- 		 */
-+#ifdef ENABLE_IPV6
-+		for (res = res0; res; res = res->ai_next) {
-+			(void) memcpy(&cip->servCtlAddr, res->ai_addr, (size_t)res->ai_addrlen);
-+			if ((sockfd = socket(cip->servCtlAddr.ss_family, SOCK_STREAM, 0)) < 0) {
-+				Error(cip, kDoPerror, "Could not get a socket.\n");
-+				cip->errNo = kErrNewStreamSocket;
-+				return (kErrNewStreamSocket);
-+			}
-+#else
- 		for (curaddr = hp->h_addr_list; *curaddr != NULL; curaddr++) {
- 			if ((sockfd = socket(cip->servCtlAddr.sin_family, SOCK_STREAM, 0)) < 0) {
- 				Error(cip, kDoPerror, "Could not get a socket.\n");
-@@ -513,6 +554,8 @@
- 			 * just for this purpose.
- 			 */
- 			(void) memcpy(&cip->servCtlAddr.sin_addr, *curaddr, (size_t) hp->h_length);
-+			cip->servCtlAddr.sin_family = hp->h_addrtype;
-+#endif
+-	if (hpok == 0) {
+-		/* Since we're given a single raw address, and not a host entry,
+-		 * we can only try this one address and not any other addresses
+-		 * that could be present for a site with a host entry.
+-		 */
+-
+-		if ((sockfd = socket(cip->servCtlAddr.sin_family, SOCK_STREAM, 0)) < 0) {
++	/* We can try each address in the list.  We'll quit when we
++	 * run out of addresses to try or get a successful connection.
++	 */
++	for (res = res0; res; res = res->ai_next) {
++		(void) memcpy(&cip->servCtlAddr, res->ai_addr, (size_t)res->ai_addrlen);
++		if ((sockfd = socket(cip->servCtlAddr.ss_family, SOCK_STREAM, 0)) < 0) {
++			if (res0->ai_next)
++				continue;
+ 			FTPLogError(cip, kDoPerror, "Could not get a socket.\n");
+ 			cip->errNo = kErrNewStreamSocket;
+ 			return (kErrNewStreamSocket);
+@@ -203,14 +205,14 @@
+ 		(void) SetSocketBufSize(sockfd, cip->ctrlSocketRBufSize, cip->ctrlSocketSBufSize);
  
- 			/* This doesn't do anything if you left these
- 			 * at their defaults (zero).  Otherwise it
-@@ -567,8 +610,18 @@
- 				}
- 				return (result);
- 			} else {
-+#ifdef ENABLE_IPV6
+ #ifdef NO_SIGNALS
+-		err = SConnect(sockfd, &cip->servCtlAddr, (int) cip->connTimeout);
++		err = SConnect(sockfd, (struct sockaddr *)&cip->servCtlAddr, (int) cip->connTimeout);
+ 
+-		if (err < 0) {
+-			oerrno = errno;
+-			(void) SClose(sockfd, 3);
+-			errno = oerrno;
+-			sockfd = -1;
+-		}
++		if (err == 0)
++			break;
++		oerrno = errno;
++		(void) SClose(sockfd, 3);
++		errno = oerrno;
++		sockfd = -1;
+ #else	/* NO_SIGNALS */
+ 		osigint = (volatile FTPSigProc) signal(SIGINT, CancelConnect);
+ 		if (cip->connTimeout > 0) {
+@@ -239,6 +241,8 @@
+ 				Error(vcip, kDontPerror, "Connection attempt canceled.\n");
+ 				(void) kill(getpid(), SIGINT);
+ 			} else if (gGotSig == SIGALRM) {
++				if (res0->ai_next)
++					continue;
+ 				result = vcip->errNo = kErrConnectRetryableErr;
+ 				Error(vcip, kDontPerror, "Connection attempt timed-out.\n");
+ 				(void) kill(getpid(), SIGALRM);
+@@ -247,9 +251,14 @@
+ 				Error(vcip, kDontPerror, "Connection attempt failed due to an unexpected signal (%d).\n", gGotSig);
+ 			}
+ 			return (result);
+-		} else  {
++		} else {
+ 			err = connect(sockfd, (struct sockaddr *) &cip->servCtlAddr,
+-				      (int) sizeof (cip->servCtlAddr));
 +#ifdef HAVE_SOCKADDR_SA_LEN
-+				err = connect(sockfd, (struct sockaddr *) &cip->servCtlAddr,
-+					      cip->servCtlAddr.ss_len);
++				      cip->servCtlAddr.ss_len
 +#else
-+				err = connect(sockfd, (struct sockaddr *) &cip->servCtlAddr,
-+					      SA_LEN((struct sockaddr *)&cip->servCtlAddr));
++				      SA_LEN((struct sockaddr *)&cip->servCtlAddr)
 +#endif
-+#else
- 				err = connect(sockfd, (struct sockaddr *) &cip->servCtlAddr,
- 					      (int) sizeof (cip->servCtlAddr));
-+#endif
- 				if (cip->connTimeout > 0) {
- 					(void) alarm(0);
- 					(void) signal(SIGALRM, (FTPSigProc) osigalrm);
-@@ -584,7 +637,12 @@
- 			sockfd = -1;
- #endif /* NO_SIGNALS */
++				);
+ 			if (cip->connTimeout > 0) {
+ 				(void) alarm(0);
+ 				(void) signal(SIGALRM, (FTPSigProc) osigalrm);
+@@ -257,99 +266,13 @@
+ 			(void) signal(SIGINT, (FTPSigProc) osigint);
  		}
-+#ifndef ENABLE_IPV6
+ 
+-		if (err < 0) {
+-			oerrno = errno;
+-			(void) DisposeSocket(sockfd);
+-			errno = oerrno;
+-			sockfd = -1;
+-		}
+-#endif	/* NO_SIGNALS */
+-	} else {
+-		/* We can try each address in the list.  We'll quit when we
+-		 * run out of addresses to try or get a successful connection.
+-		 */
+-		for (curaddr = hp.h_addr_list; *curaddr != NULL; curaddr++) {
+-			if ((sockfd = socket(cip->servCtlAddr.sin_family, SOCK_STREAM, 0)) < 0) {
+-				FTPLogError(cip, kDoPerror, "Could not get a socket.\n");
+-				cip->errNo = kErrNewStreamSocket;
+-				return (kErrNewStreamSocket);
+-			}
+-			/* This could overwrite the address field in the structure,
+-			 * but this is okay because the structure has a junk field
+-			 * just for this purpose.
+-			 */
+-			(void) memcpy(&cip->servCtlAddr.sin_addr, *curaddr, (size_t) hp.h_length);
+-
+-			/* This doesn't do anything if you left these
+-			 * at their defaults (zero).  Otherwise it
+-			 * tries to set the buffer size to the
+-			 * size specified.
+-			 */
+-			(void) SetSocketBufSize(sockfd, cip->ctrlSocketRBufSize, cip->ctrlSocketSBufSize);
+-
+-#ifdef NO_SIGNALS
+-			err = SConnect(sockfd, &cip->servCtlAddr, (int) cip->connTimeout);
+-
+-			if (err == 0)
+-				break;
+-			oerrno = errno;
+-			(void) SClose(sockfd, 3);
+-			errno = oerrno;
+-			sockfd = -1;
+-#else	/* NO_SIGNALS */
+-
+-			osigint = (volatile FTPSigProc) signal(SIGINT, CancelConnect);
+-			if (cip->connTimeout > 0) {
+-				osigalrm = (volatile FTPSigProc) signal(SIGALRM, CancelConnect);
+-				(void) alarm(cip->connTimeout);
+-			}
+-
+-			vcip = cip;
+-#ifdef HAVE_SIGSETJMP
+-			sj = sigsetjmp(gCancelConnectJmp, 1);
+-#else
+-			sj = setjmp(gCancelConnectJmp);
+-#endif	/* HAVE_SIGSETJMP */
+-
+-			if (sj != 0) {
+-				/* Interrupted by a signal. */
+-				(void) DisposeSocket(sockfd);
+-				(void) signal(SIGINT, (FTPSigProc) osigint);
+-				if (vcip->connTimeout > 0) {
+-					(void) alarm(0);
+-					(void) signal(SIGALRM, (FTPSigProc) osigalrm);
+-				}
+-				if (gGotSig == SIGINT) {
+-					result = vcip->errNo = kErrConnectMiscErr;
+-					Error(vcip, kDontPerror, "Connection attempt canceled.\n");
+-					(void) kill(getpid(), SIGINT);
+-				} else if (gGotSig == SIGALRM) {
+-					result = vcip->errNo = kErrConnectRetryableErr;
+-					Error(vcip, kDontPerror, "Connection attempt timed-out.\n");
+-					(void) kill(getpid(), SIGALRM);
+-				} else {
+-					result = vcip->errNo = kErrConnectMiscErr;
+-					Error(vcip, kDontPerror, "Connection attempt failed due to an unexpected signal (%d).\n", gGotSig);
+-				}
+-				return (result);
+-			} else {
+-				err = connect(sockfd, (struct sockaddr *) &cip->servCtlAddr,
+-					      (int) sizeof (cip->servCtlAddr));
+-				if (cip->connTimeout > 0) {
+-					(void) alarm(0);
+-					(void) signal(SIGALRM, (FTPSigProc) osigalrm);
+-				}
+-				(void) signal(SIGINT, (FTPSigProc) osigint);
+-			}
+-
+-			if (err == 0)
+-				break;
+-			oerrno = errno;
+-			(void) DisposeSocket(sockfd);
+-			errno = oerrno;
+-			sockfd = -1;
++		if (err == 0)
++			break;
++		oerrno = errno;
++		(void) DisposeSocket(sockfd);
++		errno = oerrno;
++		sockfd = -1;
+ #endif /* NO_SIGNALS */
+-		}
  	}
-+#endif
-+#ifdef ENABLE_IPV6
-+	freeaddrinfo(res0);
-+#endif
  	
  	if (err < 0) {
- 		/* Could not connect.  Close up shop and go home. */
-@@ -642,7 +700,7 @@
+@@ -408,7 +331,7 @@
  	}
  
  	/* Get our end of the socket address for later use. */
@@ -399,42 +671,43 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +	if ((result = GetSocketAddress(cip, sockfd, (struct sockaddr *)&cip->ourCtlAddr)) < 0)
  		goto fatal;
  
- #ifdef SO_OOBINLINE
-@@ -717,6 +775,20 @@
+ 	/* We want Out-of-band data to appear in the regular stream,
+@@ -479,11 +402,20 @@
  #endif
  #endif	/* NO_SIGNALS */
  
-+#ifdef ENABLE_IPV6
+-	InetNtoA(cip->ip, &cip->servCtlAddr.sin_addr, sizeof(cip->ip));
+-	if ((hpok == 0) || (hp.h_name == NULL))
++	getnameinfo((struct sockaddr*)&cip->servCtlAddr,
 +#ifdef HAVE_SOCKADDR_SA_LEN
-+	getnameinfo((struct sockaddr*)&cip->servCtlAddr, cip->servCtlAddr.ss_len, buf,
-+		    sizeof(buf), NULL, 0, NI_NUMERICHOST);
++		    cip->servCtlAddr.ss_len,
 +#else
-+	getnameinfo((struct sockaddr*)&cip->servCtlAddr, SA_LEN((struct sockaddr *)&cip->servCtlAddr), buf,
-+		    sizeof(buf), NULL, 0, NI_NUMERICHOST);
++		    SA_LEN((struct sockaddr *)&cip->servCtlAddr),
 +#endif
++		     buf, sizeof(buf), NULL, 0, NI_NUMERICHOST);
 +	(void) STRNCPY(cip->ip, buf);
 +	if ((res0 == NULL) || (res0->ai_canonname == NULL))
-+		(void) STRNCPY(cip->actualHost, fhost);
-+	else
+ 		(void) STRNCPY(cip->actualHost, fhost);
+ 	else
+-		(void) STRNCPY(cip->actualHost, (char *) hp.h_name);
 +		(void) STRNCPY(cip->actualHost, (char *) res0->ai_canonname);
-+#else
- #ifdef HAVE_INET_NTOP	/* Mostly to workaround bug in IRIX 6.5's inet_ntoa */
- 	(void) memset(cip->ip, 0, sizeof(cip->ip));
- 	(void) inet_ntop(AF_INET, &cip->servCtlAddr.sin_addr, cip->ip, sizeof(cip->ip) - 1);
-@@ -724,9 +796,10 @@
- 	(void) STRNCPY(cip->ip, inet_ntoa(cip->servCtlAddr.sin_addr));
- #endif
- 	if ((hp == NULL) || (hp->h_name == NULL))
--		(void) STRNCPY(cip->actualHost, fhost);
--	else
-+ 		(void) STRNCPY(cip->actualHost, fhost);
-+ 	else
- 		(void) STRNCPY(cip->actualHost, (char *) hp->h_name);
-+#endif
++	freeaddrinfo(res0);
++	res0 = NULL;
  
  	/* Read the startup message from the server. */	
  	rp = InitResponse();
-@@ -896,11 +969,16 @@
+@@ -578,6 +510,10 @@
+ 	CloseFile(&cip->cout);
+ 	cip->ctrlSocketR = kClosedFileDescriptor;
+ 	cip->ctrlSocketW = kClosedFileDescriptor;
++	if (res0) {
++		freeaddrinfo(res0);
++		res0 = NULL;
++	}
+ 	return (result);
+ }	/* OpenControlConnection */
+ 
+@@ -664,11 +600,15 @@
  
  
  static int
@@ -447,12 +720,11 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +	struct sockaddr_in *saddr4;
 +#ifdef ENABLE_IPV6
 +	struct sockaddr_in6 *saddr6;
-+	char buf[INET6_ADDRSTRLEN];
 +#endif
  
  	rp = InitResponse();
  	if (rp == NULL) {
-@@ -909,16 +987,42 @@
+@@ -677,16 +617,46 @@
  		return (cip->errNo);
  	}
  
@@ -462,6 +734,12 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  #define UC(x) (int) (((int) x) & 0xff)
 +#ifdef ENABLE_IPV6
 +	if (saddr->sa_family == AF_INET6) {
++		char host[NI_MAXHOST];
++		char port[NI_MAXSERV];
++
++		getnameinfo(saddr, sizeof(struct sockaddr_in6), host, sizeof(host),
++			    port, sizeof(port), NI_NUMERICHOST | NI_NUMERICSERV);
++
 +		saddr6 = (struct sockaddr_in6 *)saddr;
 +		/* These will point to data in network byte order. */
 +		a = (char *) &saddr6->sin6_addr;
@@ -469,9 +747,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +		/* Need to tell the other side which host (the address) and
 +		 * which process (port) on that host to send data to.
 +		 */
-+		result = RCmd(cip, rp, "EPRT |2|%s|%d|",
-+			      inet_ntop(AF_INET6, &saddr6->sin6_addr, buf, sizeof(buf)),
-+					ntohs(saddr6->sin6_port));
++		result = RCmd(cip, rp, "EPRT |2|%s|%s|", host, port);
 +		if (result != 2) {
 +			result = RCmd(cip, rp, "LPRT 6,16,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,2,%d,%d",
 +				      UC(a[ 0]), UC(a[ 1]), UC(a[ 2]), UC(a[ 3]),
@@ -503,7 +779,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  
  	if (result < 0) {
  		return (result);
-@@ -936,13 +1040,18 @@
+@@ -704,13 +674,18 @@
  
  
  static int
@@ -525,7 +801,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  
  	rp = InitResponse();
  	if (rp == NULL) {
-@@ -951,53 +1060,159 @@
+@@ -719,53 +694,159 @@
  		return (cip->errNo);
  	}
  
@@ -557,24 +833,24 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +
  	for (cp = rp->msg.first->line; ; cp++) {
  		if (*cp == '\0') {
--			Error(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
+-			FTPLogError(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
 -			goto done;
-+			Error(cip, kDontPerror, "Cannot parse EPSV response: %s\n", rp->msg.first->line);
++			FTPLogError(cip, kDontPerror, "Cannot parse EPSV response: %s\n", rp->msg.first->line);
 +			goto next;
  		}
  		if (isdigit((int) *cp))
  			break;
  	}
-+	if (sscanf(cp, "%d|", &port) != 1) {
-+		Error(cip, kDontPerror, "Cannot parse EPSV response: %s\n", rp->msg.first->line);
++	if (sscanf(cp, "%hd|", &port) != 1) {
++		FTPLogError(cip, kDontPerror, "Cannot parse EPSV response: %s\n", rp->msg.first->line);
 +		goto next;
 +	}
-+
  
 -	if (sscanf(cp, "%d,%d,%d,%d,%d,%d",
 -			&i[0], &i[1], &i[2], &i[3], &i[4], &i[5]) != 6) {
--		Error(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
+-		FTPLogError(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
 -		goto done;
++
 +#ifdef ENABLE_IPV6
 +	if (saddr->sa_family == AF_INET6) {
 +		saddr6->sin6_addr =
@@ -601,7 +877,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 + next:
 +	rp = InitResponse();
 +	if (rp == NULL) {
-+		Error(cip, kDontPerror, "Malloc failed.\n");
++		FTPLogError(cip, kDontPerror, "Malloc failed.\n");
 +		cip->errNo = kErrMallocFailed;
 +		return (cip->errNo);
  	}
@@ -631,7 +907,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +		 */
 +		for (cp = rp->msg.first->line; ; cp++) {
 +			if (*cp == '\0') {
-+				Error(cip, kDontPerror, "Cannot parse LPSV response: %s\n", rp->msg.first->line);
++				FTPLogError(cip, kDontPerror, "Cannot parse LPSV response: %s\n", rp->msg.first->line);
 +				goto done;
 +			}
 +			if (isdigit((int) *cp))
@@ -646,11 +922,11 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +			   &i[12], &i[13], &i[14], &i[15],
 +			   &pal,
 +			   &i[16], &i[17]) != 21) {
-+			Error(cip, kDontPerror, "Cannot parse LPSV response: %s\n", rp->msg.first->line);
++			FTPLogError(cip, kDontPerror, "Cannot parse LPSV response: %s\n", rp->msg.first->line);
 +			goto done;
 +		}
 +		if (af != 6 || hal != 16 || pal != 2) {
-+			Error(cip, kDontPerror, "Cannot parse LPSV response: %s\n", rp->msg.first->line);
++			FTPLogError(cip, kDontPerror, "Cannot parse LPSV response: %s\n", rp->msg.first->line);
 +			goto done;
 +		}
 +
@@ -690,19 +966,19 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +		 */
 +		for (cp = rp->msg.first->line; ; cp++) {
 +			if (*cp == '\0') {
-+				Error(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
++				FTPLogError(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
 +				goto done;
 +			}
 +			if (isdigit((int) *cp))
 +				break;
 +		}
-+
+ 
 +		if (sscanf(cp, "%d,%d,%d,%d,%d,%d",
 +			   &i[0], &i[1], &i[2], &i[3], &i[4], &i[5]) != 6) {
-+			Error(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
++			FTPLogError(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
 +			goto done;
 +		}
- 
++
 +		for (j=0, *weird = 0; j<6; j++) {
 +			/* Some ftp servers return bogus port octets, such as
 +			 * boombox.micro.umn.edu.  Let the caller know if we got a
@@ -720,7 +996,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  	result = kNoErr;
  done:
  	DoneWithResponse(cip, rp);
-@@ -1008,30 +1223,46 @@
+@@ -776,30 +857,45 @@
  
  
  static int
@@ -742,15 +1018,15 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 -
 -		result = bind(sockfd, (struct sockaddr *) addrp, sizeof(struct sockaddr_in));
 +#ifdef ENABLE_IPV6
-+		 if (addrp->sa_family == AF_INET6)
-+                        ((struct sockaddr_in6 *)addrp)->sin6_port = 0;  /* Let system pick one. */
-+                 else
++		if (addrp->sa_family == AF_INET6)
++			((struct sockaddr_in6 *)addrp)->sin6_port = 0;	/* Let system pick one. */
++		else
 +#endif
-+                        ((struct sockaddr_in *)addrp)->sin_port = 0;    /* Let system pick one. */
++			((struct sockaddr_in *)addrp)->sin_port = 0;	/* Let system pick one. */
 +#ifdef HAVE_SOCKADDR_SA_LEN
-+    		 result = bind(sockfd, addrp, addrp->sa_len);
++		result = bind(sockfd, addrp, addrp->sa_len);
 +#else
-+                 result = bind(sockfd, addrp, SA_LEN(addrp));
++		result = bind(sockfd, addrp, SA_LEN(addrp));
 +#endif
  	} else {
  		rangesize = (int) ((int) ephemHi - (int) ephemLo);
@@ -761,21 +1037,20 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 -
 -			result = bind(sockfd, (struct sockaddr *) addrp, sizeof(struct sockaddr_in));
 +#ifdef ENABLE_IPV6
-+                        if (addrp->sa_family == AF_INET6)
-+                                ((struct sockaddr_in6 *)addrp)->sin6_port = port;
-+                        else
++			if (addrp->sa_family == AF_INET6)
++				((struct sockaddr_in6 *)addrp)->sin6_port = htons(port);
++			else
 +#endif
-+                                ((struct sockaddr_in *)addrp)->sin_port = port;
-+			
++				((struct sockaddr_in *)addrp)->sin_port = htons(port);
 +#ifdef HAVE_SOCKADDR_SA_LEN
-+                        result = bind(sockfd, addrp, addrp->sa_len);
++			result = bind(sockfd, addrp, addrp->sa_len);
 +#else
-+                        result = bind(sockfd, addrp, SA_LEN(addrp));
++			result = bind(sockfd, addrp, SA_LEN(addrp));
 +#endif
  			if (result == 0)
  				break;
  			if ((errno != 999)
-@@ -1066,7 +1297,11 @@
+@@ -834,7 +930,11 @@
  	result = 0;
  	CloseDataConnection(cip);	/* In case we didn't before... */
  
@@ -785,9 +1060,9 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  	dataSocket = socket(AF_INET, SOCK_STREAM, 0);
 +#endif
  	if (dataSocket < 0) {
- 		Error(cip, kDoPerror, "Could not get a data socket.\n");
+ 		FTPLogError(cip, kDoPerror, "Could not get a data socket.\n");
  		result = kErrNewStreamSocket;
-@@ -1084,7 +1319,6 @@
+@@ -852,7 +952,6 @@
  	if ((cip->hasPASV == kCommandNotAvailable) || (mode == kSendPortMode)) {
  tryPort:
  		cip->ourDataAddr = cip->ourCtlAddr;
@@ -795,7 +1070,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  
  #ifdef HAVE_LIBSOCKS
  		cip->ourDataAddr.sin_port = 0;
-@@ -1092,7 +1326,7 @@
+@@ -860,7 +959,7 @@
  			(int) sizeof (cip->ourDataAddr),
  			cip->servCtlAddr.sin_addr.s_addr) < 0) 
  #else
@@ -803,8 +1078,8 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +		if (BindToEphemeralPortNumber(dataSocket, (struct sockaddr *)&cip->ourDataAddr, (int) cip->ephemLo, (int) cip->ephemHi) < 0)
  #endif
  		{
- 			Error(cip, kDoPerror, "Could not bind the data socket");
-@@ -1104,7 +1338,7 @@
+ 			FTPLogError(cip, kDoPerror, "Could not bind the data socket");
+@@ -872,7 +971,7 @@
  		/* Need to do this so we can figure out which port the system
  		 * gave to us.
  		 */
@@ -813,7 +1088,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  			goto bad;
  	
  		if (listen(dataSocket, 1) < 0) {
-@@ -1114,7 +1348,7 @@
+@@ -882,7 +981,7 @@
  			goto bad;
  		}
  	
@@ -822,7 +1097,7 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  			goto bad;
  	
  		cip->dataPortMode = kSendPortMode;
-@@ -1122,11 +1356,9 @@
+@@ -890,11 +989,9 @@
  		/* Passive mode.  Let the other side decide where to send. */
  		
  		cip->servDataAddr = cip->servCtlAddr;
@@ -832,10 +1107,10 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  
 -		if (Passive(cip, &cip->servDataAddr, &weirdPort) < 0) {
 +		if (Passive(cip, (struct sockaddr *) &cip->servDataAddr, &weirdPort) < 0) {
- 			Error(cip, kDontPerror, "Passive mode refused.\n");
+ 			FTPLogError(cip, kDontPerror, "Passive mode refused.\n");
  			cip->hasPASV = kCommandNotAvailable;
  			
-@@ -1150,7 +1382,7 @@
+@@ -918,7 +1015,7 @@
  			(int) sizeof (cip->ourDataAddr),
  			cip->servCtlAddr.sin_addr.s_addr) < 0) 
  #else
@@ -843,8 +1118,8 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +		if (BindToEphemeralPortNumber(dataSocket, (struct sockaddr *)&cip->ourDataAddr, (int) cip->ephemLo, (int) cip->ephemHi) < 0)
  #endif
  		{
- 			Error(cip, kDoPerror, "Could not bind the data socket");
-@@ -1158,14 +1390,27 @@
+ 			FTPLogError(cip, kDoPerror, "Could not bind the data socket");
+@@ -926,14 +1023,25 @@
  			cip->errNo = kErrBindDataSocket;
  			goto bad;
  		}
@@ -856,24 +1131,24 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +			goto bad;
  
  #ifdef NO_SIGNALS
- 		result = SConnect(dataSocket, &cip->servDataAddr, (int) cip->connTimeout);
+-		result = SConnect(dataSocket, &cip->servDataAddr, (int) cip->connTimeout);
++		result = SConnect(dataSocket, (struct sockaddr *)&cip->servDataAddr, (int) cip->connTimeout);
  #else	/* NO_SIGNALS */
  		if (cip->connTimeout > 0)
  			(void) alarm(cip->connTimeout);
 -
-+#ifdef ENABLE_IPV6
+-		result = connect(dataSocket, (struct sockaddr *) &cip->servDataAddr, (int) sizeof(cip->servDataAddr));
++		result = connect(dataSocket, (struct sockaddr *) &cip->servDataAddr,
 +#ifdef HAVE_SOCKADDR_SA_LEN
-+		result = connect(dataSocket, (struct sockaddr *) &cip->servDataAddr, cip->servDataAddr.ss_len);
++				 cip->servDataAddr.ss_len
 +#else
-+		result = connect(dataSocket, (struct sockaddr *) &cip->servDataAddr, SA_LEN((struct sockaddr*)&cip->servDataAddr));
++				 SA_LEN((struct sockaddr*)&cip->servDataAddr)
 +#endif
-+#else
- 		result = connect(dataSocket, (struct sockaddr *) &cip->servDataAddr, (int) sizeof(cip->servDataAddr));
-+#endif
++			);
  		if (cip->connTimeout > 0)
  			(void) alarm(0);
  #endif	/* NO_SIGNALS */
-@@ -1217,7 +1462,7 @@
+@@ -985,7 +1093,7 @@
  		/* Need to do this so we can figure out which port the system
  		 * gave to us.
  		 */
@@ -882,21 +1157,47 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  			goto bad;
  
  		cip->dataPortMode = kPassiveMode;
-@@ -1284,23 +1529,54 @@
- 		}
+@@ -1031,7 +1139,7 @@
+ 		memset(&cip->servDataAddr, 0, sizeof(cip->servDataAddr));
  
+ #ifdef NO_SIGNALS
+-		newSocket = SAccept(cip->dataSocket, &cip->servDataAddr, (int) cip->connTimeout);
++		newSocket = SAccept(cip->dataSocket, (struct sockaddr *)&cip->servDataAddr, (int) cip->connTimeout);
+ #else	/* NO_SIGNALS */
+ 		len = (int) sizeof(cip->servDataAddr);
+ 		if (cip->connTimeout > 0)
+@@ -1048,11 +1156,16 @@
+ 			cip->errNo = kErrAcceptDataSocket;
+ 			return (kErrAcceptDataSocket);
+ 		}
+-	
+ 		if (cip->allowProxyForPORT == 0) {
+-			if (memcmp(&cip->servDataAddr.sin_addr.s_addr, &cip->servCtlAddr.sin_addr.s_addr, sizeof(cip->servDataAddr.sin_addr.s_addr)) != 0) {
+-				AddrToAddrStr(ctrlAddrStr, sizeof(ctrlAddrStr), &cip->servCtlAddr, 0, NULL);
+-				AddrToAddrStr(dataAddrStr, sizeof(dataAddrStr), &cip->servDataAddr, 0, NULL);
++			if (memcmp(&cip->servDataAddr, &cip->servCtlAddr,
++#ifdef HAVE_SOCKADDR_SA_LEN
++				   cip->servDataAddr.ss_len
++#else
++				   SA_LEN((struct sockaddr *)&cip->servDataAddr)
++#endif
++				    ) != 0) {
++				AddrToAddrStr(ctrlAddrStr, sizeof(ctrlAddrStr), (struct sockaddr *)&cip->servCtlAddr, 0, NULL);
++				AddrToAddrStr(dataAddrStr, sizeof(dataAddrStr), (struct sockaddr *)&cip->servDataAddr, 0, NULL);
+ 				FTPLogError(cip, kDontPerror, "Data connection from %s did not originate from remote server %s!\n", dataAddrStr, ctrlAddrStr);
+ 				(void) DisposeSocket(newSocket);
+ 				cip->dataSocket = kClosedFileDescriptor;
+@@ -1060,21 +1173,57 @@
+ 				return (kErrAcceptDataSocket);
+ 			}
+ 		}
+-
  		if (cip->require20 != 0) {
 -			remoteDataPort = ntohs(cip->servDataAddr.sin_port);
 -			remoteCtrlPort = ntohs(cip->servCtlAddr.sin_port);
 -			if ((int) remoteDataPort != ((int) remoteCtrlPort - 1)) {
--				Error(cip, kDontPerror, "Data connection did not originate on correct port!\n");
--				(void) closesocket(newSocket);
--				cip->dataSocket = kClosedFileDescriptor;
--				cip->errNo = kErrAcceptDataSocket;
--				return (kErrAcceptDataSocket);
--			} else if (memcmp(&cip->servDataAddr.sin_addr.s_addr, &cip->servCtlAddr.sin_addr.s_addr, sizeof(cip->servDataAddr.sin_addr.s_addr)) != 0) {
--				Error(cip, kDontPerror, "Data connection did not originate from remote server!\n");
--				(void) closesocket(newSocket);
+-				FTPLogError(cip, kDontPerror, "Data connection did not originate on correct port!\n");
+-				(void) DisposeSocket(newSocket);
 -				cip->dataSocket = kClosedFileDescriptor;
 -				cip->errNo = kErrAcceptDataSocket;
 -				return (kErrAcceptDataSocket);
@@ -910,14 +1211,14 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +				remoteDataPort = ntohs(servDataAddr->sin6_port);
 +				remoteCtrlPort = ntohs(servCtlAddr->sin6_port);
 +				if ((int) remoteDataPort != ((int) remoteCtrlPort - 1)) {
-+					Error(cip, kDontPerror, "Data connection did not originate on correct port!\n");
-+					(void) closesocket(newSocket);
++					FTPLogError(cip, kDontPerror, "Data connection did not originate on correct port!\n");
++					(void) DisposeSocket(newSocket);
 +					cip->dataSocket = kClosedFileDescriptor;
 +					cip->errNo = kErrAcceptDataSocket;
 +					return (kErrAcceptDataSocket);
 +				} else if (memcmp(&servDataAddr->sin6_addr, &servCtlAddr->sin6_addr, sizeof(servDataAddr->sin6_addr)) != 0) {
-+					Error(cip, kDontPerror, "Data connection did not originate from remote server!\n");
-+					(void) close(newSocket);
++					FTPLogError(cip, kDontPerror, "Data connection did not originate from remote server!\n");
++					(void) DisposeSocket(newSocket);
 +					cip->dataSocket = kClosedFileDescriptor;
 +					cip->errNo = kErrAcceptDataSocket;
 +					return (kErrAcceptDataSocket);
@@ -932,14 +1233,14 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
 +				remoteDataPort = ntohs(servDataAddr->sin_port);
 +				remoteCtrlPort = ntohs(servCtlAddr->sin_port);
 +				if ((int) remoteDataPort != ((int) remoteCtrlPort - 1)) {
-+					Error(cip, kDontPerror, "Data connection did not originate on correct port!\n");
-+					(void) closesocket(newSocket);
++					FTPLogError(cip, kDontPerror, "Data connection did not originate on correct port!\n");
++					(void) DisposeSocket(newSocket);
 +					cip->dataSocket = kClosedFileDescriptor;
 +					cip->errNo = kErrAcceptDataSocket;
 +					return (kErrAcceptDataSocket);
 +				} else if (memcmp(&servDataAddr->sin_addr.s_addr, &servCtlAddr->sin_addr.s_addr, sizeof(servDataAddr->sin_addr.s_addr)) != 0) {
-+					Error(cip, kDontPerror, "Data connection did not originate from remote server!\n");
-+					(void) close(newSocket);
++					FTPLogError(cip, kDontPerror, "Data connection did not originate from remote server!\n");
++					(void) DisposeSocket(newSocket);
 +					cip->dataSocket = kClosedFileDescriptor;
 +					cip->errNo = kErrAcceptDataSocket;
 +					return (kErrAcceptDataSocket);
@@ -948,35 +1249,895 @@ diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
  			}
 +#endif		
  		}
--		
  		cip->dataSocket = newSocket;
  	}
+-
+ 	return (0);
+ }	/* AcceptDataConnection */
  
-diff -urN ncftp-3.0.4.orig/libncftp/ncftp.h ncftp-3.0.4/libncftp/ncftp.h
---- ncftp-3.0.4.orig/libncftp/ncftp.h	Thu Oct 25 23:59:56 2001
-+++ ncftp-3.0.4/libncftp/ncftp.h	Thu Nov  8 09:41:04 2001
-@@ -178,10 +178,17 @@
+Index: ncftp3/libncftp/getaddrinfo.c
+diff -u /dev/null ncftp3/libncftp/getaddrinfo.c:1.1
+--- /dev/null	Fri Feb  7 10:02:34 2003
++++ ncftp3/libncftp/getaddrinfo.c	Tue Nov  6 23:50:46 2001
+@@ -0,0 +1,607 @@
++/*
++ * Copyright (C) 1995, 1996, 1997, and 1998 WIDE Project.
++ * All rights reserved.
++ * 
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the project nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ * 
++ * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++/*
++ * "#ifdef FAITH" part is local hack for supporting IPv4-v6 translator.
++ *
++ * Issues to be discussed:
++ * - Thread safe-ness must be checked.
++ * - Return values.  There are nonstandard return values defined and used
++ *   in the source code.  This is because RFC2133 is silent about which error
++ *   code must be returned for which situation.
++ * - PF_UNSPEC case would be handled in getipnodebyname() with the AI_ALL flag.
++ */
++
++#include <sys/types.h>
++#include <sys/param.h>
++#include <sys/sysctl.h>
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <arpa/inet.h>
++#include <arpa/nameser.h>
++#include <netdb.h>
++#include <resolv.h>
++#include <string.h>
++#include <stdlib.h>
++#include <stddef.h>
++#include <ctype.h>
++#include <unistd.h>
++
++#include "addrinfo.h"
++
++#if defined(__KAME__) && defined(INET6)
++# define FAITH
++#endif
++
++#define SUCCESS 0
++#define ANY 0
++#define YES 1
++#define NO  0
++
++#ifdef FAITH
++static int translate = NO;
++static struct in6_addr faith_prefix = IN6ADDR_ANY_INIT;
++#endif
++
++static const char in_addrany[] = { 0, 0, 0, 0 };
++static const char in6_addrany[] = {
++	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
++};
++static const char in_loopback[] = { 127, 0, 0, 1 }; 
++static const char in6_loopback[] = {
++	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
++};
++
++struct sockinet {
++	u_char	si_len;
++	u_char	si_family;
++	u_short	si_port;
++};
++
++static struct afd {
++	int a_af;
++	int a_addrlen;
++	int a_socklen;
++	int a_off;
++	const char *a_addrany;
++	const char *a_loopback;	
++} afdl [] = {
++#ifdef INET6
++#define N_INET6 0
++	{PF_INET6, sizeof(struct in6_addr),
++	 sizeof(struct sockaddr_in6),
++	 offsetof(struct sockaddr_in6, sin6_addr),
++	 in6_addrany, in6_loopback},
++#define N_INET  1
++#else
++#define N_INET  0
++#endif
++	{PF_INET, sizeof(struct in_addr),
++	 sizeof(struct sockaddr_in),
++	 offsetof(struct sockaddr_in, sin_addr),
++	 in_addrany, in_loopback},
++	{0, 0, 0, 0, NULL, NULL},
++};
++
++#ifdef INET6
++#define PTON_MAX	16
++#else
++#define PTON_MAX	4
++#endif
++
++
++static int get_name __P((const char *, struct afd *,
++			  struct addrinfo **, char *, struct addrinfo *,
++			  int));
++static int get_addr __P((const char *, int, struct addrinfo **,
++			struct addrinfo *, int));
++static int str_isnumber __P((const char *));
++	
++static char *ai_errlist[] = {
++	"success.",
++	"address family for hostname not supported.",	/* EAI_ADDRFAMILY */
++	"temporary failure in name resolution.",	/* EAI_AGAIN      */
++	"invalid value for ai_flags.",		       	/* EAI_BADFLAGS   */
++	"non-recoverable failure in name resolution.", 	/* EAI_FAIL       */
++	"ai_family not supported.",			/* EAI_FAMILY     */
++	"memory allocation failure.", 			/* EAI_MEMORY     */
++	"no address associated with hostname.", 	/* EAI_NODATA     */
++	"hostname nor servname provided, or not known.",/* EAI_NONAME     */
++	"servname not supported for ai_socktype.",	/* EAI_SERVICE    */
++	"ai_socktype not supported.", 			/* EAI_SOCKTYPE   */
++	"system error returned in errno.", 		/* EAI_SYSTEM     */
++	"invalid value for hints.",			/* EAI_BADHINTS	  */
++	"resolved protocol is unknown.",		/* EAI_PROTOCOL   */
++	"unknown error.", 				/* EAI_MAX        */
++};
++
++#define GET_CANONNAME(ai, str) \
++if (pai->ai_flags & AI_CANONNAME) {\
++	if (((ai)->ai_canonname = (char *)malloc(strlen(str) + 1)) != NULL) {\
++		strcpy((ai)->ai_canonname, (str));\
++	} else {\
++		error = EAI_MEMORY;\
++		goto free;\
++	}\
++}
++
++#define GET_AI(ai, afd, addr, port) {\
++	char *p;\
++	if (((ai) = (struct addrinfo *)malloc(sizeof(struct addrinfo) +\
++					      ((afd)->a_socklen)))\
++	    == NULL) goto free;\
++	memcpy(ai, pai, sizeof(struct addrinfo));\
++	(ai)->ai_addr = (struct sockaddr *)((ai) + 1);\
++	memset((ai)->ai_addr, 0, (afd)->a_socklen);\
++	(ai)->ai_addr->sa_len = (ai)->ai_addrlen = (afd)->a_socklen;\
++	(ai)->ai_addr->sa_family = (ai)->ai_family = (afd)->a_af;\
++	((struct sockinet *)(ai)->ai_addr)->si_port = port;\
++	p = (char *)((ai)->ai_addr);\
++	memcpy(p + (afd)->a_off, (addr), (afd)->a_addrlen);\
++}
++
++#define ERR(err) { error = (err); goto bad; }
++
++char *
++gai_strerror(ecode)
++	int ecode;
++{
++	if (ecode < 0 || ecode > EAI_MAX)
++		ecode = EAI_MAX;
++	return ai_errlist[ecode];
++}
++
++void
++freeaddrinfo(ai)
++	struct addrinfo *ai;
++{
++	struct addrinfo *next;
++
++	do {
++		next = ai->ai_next;
++		if (ai->ai_canonname)
++			free(ai->ai_canonname);
++		/* no need to free(ai->ai_addr) */
++		free(ai);
++	} while ((ai = next) != NULL);
++}
++
++static int
++str_isnumber(p)
++	const char *p;
++{
++	char *q = (char *)p;
++	while (*q) {
++		if (! isdigit(*q))
++			return NO;
++		q++;
++	}
++	return YES;
++}
++
++int
++getaddrinfo(hostname, servname, hints, res)
++	const char *hostname, *servname;
++	const struct addrinfo *hints;
++	struct addrinfo **res;
++{
++	struct addrinfo sentinel;
++	struct addrinfo *top = NULL;
++	struct addrinfo *cur;
++	int i, error = 0;
++	char pton[PTON_MAX];
++	struct addrinfo ai;
++	struct addrinfo *pai;
++	u_short port;
++
++#ifdef FAITH
++	static int firsttime = 1;
++
++	if (firsttime) {
++		/* translator hack */
++		{
++			char *q = getenv("GAI");
++			if (q && inet_pton(AF_INET6, q, &faith_prefix) == 1)
++				translate = YES;
++		}
++		firsttime = 0;
++	}
++#endif
++
++	/* initialize file static vars */
++	sentinel.ai_next = NULL;
++	cur = &sentinel;
++	pai = &ai;
++	pai->ai_flags = 0;
++	pai->ai_family = PF_UNSPEC;
++	pai->ai_socktype = ANY;
++	pai->ai_protocol = ANY;
++	pai->ai_addrlen = 0;
++	pai->ai_canonname = NULL;
++	pai->ai_addr = NULL;
++	pai->ai_next = NULL;
++	port = ANY;
++	
++	if (hostname == NULL && servname == NULL)
++		return EAI_NONAME;
++	if (hints) {
++		/* error check for hints */
++		if (hints->ai_addrlen || hints->ai_canonname ||
++		    hints->ai_addr || hints->ai_next)
++			ERR(EAI_BADHINTS); /* xxx */
++		if (hints->ai_flags & ~AI_MASK)
++			ERR(EAI_BADFLAGS);
++		switch (hints->ai_family) {
++		case PF_UNSPEC:
++		case PF_INET:
++#ifdef INET6
++		case PF_INET6:
++#endif
++			break;
++		default:
++			ERR(EAI_FAMILY);
++		}
++		memcpy(pai, hints, sizeof(*pai));
++		switch (pai->ai_socktype) {
++		case ANY:
++			switch (pai->ai_protocol) {
++			case ANY:
++				break;
++			case IPPROTO_UDP:
++				pai->ai_socktype = SOCK_DGRAM;
++				break;
++			case IPPROTO_TCP:
++				pai->ai_socktype = SOCK_STREAM;
++				break;
++			default:
++				pai->ai_socktype = SOCK_RAW;
++				break;
++			}
++			break;
++		case SOCK_RAW:
++			break;
++		case SOCK_DGRAM:
++			if (pai->ai_protocol != IPPROTO_UDP &&
++			    pai->ai_protocol != ANY)
++				ERR(EAI_BADHINTS);	/*xxx*/
++			pai->ai_protocol = IPPROTO_UDP;
++			break;
++		case SOCK_STREAM:
++			if (pai->ai_protocol != IPPROTO_TCP &&
++			    pai->ai_protocol != ANY)
++				ERR(EAI_BADHINTS);	/*xxx*/
++			pai->ai_protocol = IPPROTO_TCP;
++			break;
++		default:
++			ERR(EAI_SOCKTYPE);
++			break;
++		}
++	}
++
++	/*
++	 * service port
++	 */
++	if (servname) {
++		if (str_isnumber(servname)) {
++			if (pai->ai_socktype == ANY) {
++				/* caller accept *ANY* socktype */
++				pai->ai_socktype = SOCK_DGRAM;
++				pai->ai_protocol = IPPROTO_UDP;
++			}
++			port = htons(atoi(servname));
++		} else {
++			struct servent *sp;
++			char *proto;
++
++			proto = NULL;
++			switch (pai->ai_socktype) {
++			case ANY:
++				proto = NULL;
++				break;
++			case SOCK_DGRAM:
++				proto = "udp";
++				break;
++			case SOCK_STREAM:
++				proto = "tcp";
++				break;
++			default:
++				fprintf(stderr, "panic!\n");
++				break;
++			}
++			if ((sp = getservbyname(servname, proto)) == NULL)
++				ERR(EAI_SERVICE);
++			port = sp->s_port;
++			if (pai->ai_socktype == ANY)
++				if (strcmp(sp->s_proto, "udp") == 0) {
++					pai->ai_socktype = SOCK_DGRAM;
++					pai->ai_protocol = IPPROTO_UDP;
++				} else if (strcmp(sp->s_proto, "tcp") == 0) {
++					pai->ai_socktype = SOCK_STREAM;
++					pai->ai_protocol = IPPROTO_TCP;
++				} else
++					ERR(EAI_PROTOCOL);	/*xxx*/
++		}
++	}
++	
++	/*
++	 * hostname == NULL.
++	 * passive socket -> anyaddr (0.0.0.0 or ::)
++	 * non-passive socket -> localhost (127.0.0.1 or ::1)
++	 */
++	if (hostname == NULL) {
++		struct afd *afd;
++
++		for (afd = &afdl[0]; afd->a_af; afd++) {
++			if (!(pai->ai_family == PF_UNSPEC
++			   || pai->ai_family == afd->a_af)) {
++				continue;
++			}
++
++			if (pai->ai_flags & AI_PASSIVE) {
++				GET_AI(cur->ai_next, afd, afd->a_addrany, port);
++				/* xxx meaningless?
++				 * GET_CANONNAME(cur->ai_next, "anyaddr");
++				 */
++			} else {
++				GET_AI(cur->ai_next, afd, afd->a_loopback,
++					port);
++				/* xxx meaningless?
++				 * GET_CANONNAME(cur->ai_next, "localhost");
++				 */
++			}
++			cur = cur->ai_next;
++		}
++		top = sentinel.ai_next;
++		if (top)
++			goto good;
++		else
++			ERR(EAI_FAMILY);
++	}
++	
++	/* hostname as numeric name */
++	for (i = 0; afdl[i].a_af; i++) {
++		if (inet_pton(afdl[i].a_af, hostname, pton)) {
++			u_long v4a;
++			u_char pfx;
++
++			switch (afdl[i].a_af) {
++			case AF_INET:
++				v4a = ((struct in_addr *)pton)->s_addr;
++				if (IN_MULTICAST(v4a) || IN_EXPERIMENTAL(v4a))
++					pai->ai_flags &= ~AI_CANONNAME;
++				v4a >>= IN_CLASSA_NSHIFT;
++				if (v4a == 0 || v4a == IN_LOOPBACKNET)
++					pai->ai_flags &= ~AI_CANONNAME;
++				break;
++#ifdef INET6
++			case AF_INET6:
++				pfx = ((struct in6_addr *)pton)->s6_addr8[0];
++				if (pfx == 0 || pfx == 0xfe || pfx == 0xff)
++					pai->ai_flags &= ~AI_CANONNAME;
++				break;
++#endif
++			}
++			
++			if (pai->ai_family == afdl[i].a_af ||
++			    pai->ai_family == PF_UNSPEC) {
++				if (! (pai->ai_flags & AI_CANONNAME)) {
++					GET_AI(top, &afdl[i], pton, port);
++					goto good;
++				}
++				/*
++				 * if AI_CANONNAME and if reverse lookup
++				 * fail, return ai anyway to pacify
++				 * calling application.
++				 *
++				 * XXX getaddrinfo() is a name->address
++				 * translation function, and it looks strange
++				 * that we do addr->name translation here.
++				 */
++				get_name(pton, &afdl[i], &top, pton, pai, port);
++				goto good;
++			} else 
++				ERR(EAI_FAMILY);	/*xxx*/
++		}
++	}
++
++	if (pai->ai_flags & AI_NUMERICHOST)
++		ERR(EAI_NONAME);
++
++	/* hostname as alphabetical name */
++	error = get_addr(hostname, pai->ai_family, &top, pai, port);
++	if (error == 0) {
++		if (top) {
++ good:
++			*res = top;
++			return SUCCESS;
++		} else
++			error = EAI_FAIL;
++	}
++ free:
++	if (top)
++		freeaddrinfo(top);
++ bad:
++	*res = NULL;
++	return error;
++}
++
++static int
++get_name(addr, afd, res, numaddr, pai, port0)
++	const char *addr;
++	struct afd *afd;
++	struct addrinfo **res;
++	char *numaddr;
++	struct addrinfo *pai;
++	int port0;
++{
++	u_short port = port0 & 0xffff;
++	struct hostent *hp;
++	struct addrinfo *cur;
++	int error = 0, h_error;
++	
++#ifdef INET6
++	hp = getipnodebyaddr(addr, afd->a_addrlen, afd->a_af, &h_error);
++#else
++	hp = gethostbyaddr(addr, afd->a_addrlen, AF_INET);
++#endif
++	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
++		GET_AI(cur, afd, hp->h_addr_list[0], port);
++		GET_CANONNAME(cur, hp->h_name);
++	} else
++		GET_AI(cur, afd, numaddr, port);
++	
++#ifdef INET6
++	if (hp)
++		freehostent(hp);
++#endif
++	*res = cur;
++	return SUCCESS;
++ free:
++	if (cur)
++		freeaddrinfo(cur);
++#ifdef INET6
++	if (hp)
++		freehostent(hp);
++#endif
++ /* bad: */
++	*res = NULL;
++	return error;
++}
++
++static int
++get_addr(hostname, af, res, pai, port0)
++	const char *hostname;
++	int af;
++	struct addrinfo **res;
++	struct addrinfo *pai;
++	int port0;
++{
++	u_short port = port0 & 0xffff;
++	struct addrinfo sentinel;
++	struct hostent *hp;
++	struct addrinfo *top, *cur;
++	struct afd *afd;
++	int i, error = 0, h_error;
++	char *ap;
++#ifndef INET6
++	extern int h_errno;
++#endif
++
++	top = NULL;
++	sentinel.ai_next = NULL;
++	cur = &sentinel;
++#ifdef INET6
++	if (af == AF_UNSPEC) {
++		hp = getipnodebyname(hostname, AF_INET6,
++				AI_ADDRCONFIG|AI_ALL|AI_V4MAPPED, &h_error);
++	} else
++		hp = getipnodebyname(hostname, af, AI_ADDRCONFIG, &h_error);
++#else
++	hp = gethostbyname(hostname);
++	h_error = h_errno;
++#endif
++	if (hp == NULL) {
++		switch (h_error) {
++		case HOST_NOT_FOUND:
++		case NO_DATA:
++			error = EAI_NODATA;
++			break;
++		case TRY_AGAIN:
++			error = EAI_AGAIN;
++			break;
++		case NO_RECOVERY:
++		default:
++			error = EAI_FAIL;
++			break;
++		}
++		goto bad;
++	}
++
++	if ((hp->h_name == NULL) || (hp->h_name[0] == 0) ||
++	    (hp->h_addr_list[0] == NULL))
++		ERR(EAI_FAIL);
++	
++	for (i = 0; (ap = hp->h_addr_list[i]) != NULL; i++) {
++		switch (af) {
++#ifdef INET6
++		case AF_INET6:
++			afd = &afdl[N_INET6];
++			break;
++#endif
++#ifndef INET6
++		default:	/* AF_UNSPEC */
++#endif
++		case AF_INET:
++			afd = &afdl[N_INET];
++			break;
++#ifdef INET6
++		default:	/* AF_UNSPEC */
++			if (IN6_IS_ADDR_V4MAPPED((struct in6_addr *)ap)) {
++				ap += sizeof(struct in6_addr) -
++					sizeof(struct in_addr);
++				afd = &afdl[N_INET];
++			} else
++				afd = &afdl[N_INET6];
++			break;
++#endif
++		}
++#ifdef FAITH
++		if (translate && afd->a_af == AF_INET) {
++			struct in6_addr *in6;
++
++			GET_AI(cur->ai_next, &afdl[N_INET6], ap, port);
++			in6 = &((struct sockaddr_in6 *)cur->ai_next->ai_addr)->sin6_addr;
++			memcpy(&in6->s6_addr32[0], &faith_prefix,
++			    sizeof(struct in6_addr) - sizeof(struct in_addr));
++			memcpy(&in6->s6_addr32[3], ap, sizeof(struct in_addr));
++		} else
++#endif /* FAITH */
++		GET_AI(cur->ai_next, afd, ap, port);
++		if (cur == &sentinel) {
++			top = cur->ai_next;
++			GET_CANONNAME(top, hp->h_name);
++		}
++		cur = cur->ai_next;
++	}
++#ifdef INET6
++	freehostent(hp);
++#endif
++	*res = top;
++	return SUCCESS;
++ free:
++	if (top)
++		freeaddrinfo(top);
++#ifdef INET6
++	if (hp)
++		freehostent(hp);
++#endif
++ bad:
++	*res = NULL;
++	return error;
++}
+Index: ncftp3/libncftp/getnameinfo.c
+diff -u /dev/null ncftp3/libncftp/getnameinfo.c:1.1
+--- /dev/null	Fri Feb  7 10:02:34 2003
++++ ncftp3/libncftp/getnameinfo.c	Tue Nov  6 23:50:47 2001
+@@ -0,0 +1,203 @@
++/*
++ * Copyright (C) 1995, 1996, 1997, and 1998 WIDE Project.
++ * All rights reserved.
++ * 
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the project nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ * 
++ * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++/*
++ * Issues to be discussed:
++ * - Thread safe-ness must be checked
++ * - Return values.  There seems to be no standard for return value (RFC2133)
++ *   but INRIA implementation returns EAI_xxx defined for getaddrinfo().
++ */
++
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <arpa/inet.h>
++#include <arpa/nameser.h>
++#include <netdb.h>
++#include <resolv.h>
++#include <string.h>
++#include <stddef.h>
++
++#include "addrinfo.h"
++
++#define SUCCESS 0
++#define ANY 0
++#define YES 1
++#define NO  0
++
++static struct afd {
++	int a_af;
++	int a_addrlen;
++	int a_socklen;
++	int a_off;
++} afdl [] = {
++#ifdef INET6
++	{PF_INET6, sizeof(struct in6_addr), sizeof(struct sockaddr_in6),
++		offsetof(struct sockaddr_in6, sin6_addr)},
++#endif
++	{PF_INET, sizeof(struct in_addr), sizeof(struct sockaddr_in),
++		offsetof(struct sockaddr_in, sin_addr)},
++	{0, 0, 0},
++};
++
++struct sockinet {
++	u_char	si_len;
++	u_char	si_family;
++	u_short	si_port;
++};
++
++#define ENI_NOSOCKET 	0
++#define ENI_NOSERVNAME	1
++#define ENI_NOHOSTNAME	2
++#define ENI_MEMORY	3
++#define ENI_SYSTEM	4
++#define ENI_FAMILY	5
++#define ENI_SALEN	6
++
++int
++getnameinfo(sa, salen, host, hostlen, serv, servlen, flags)
++	const struct sockaddr *sa;
++	size_t salen;
++	char *host;
++	size_t hostlen;
++	char *serv;
++	size_t servlen;
++	int flags;
++{
++	struct afd *afd;
++	struct servent *sp;
++	struct hostent *hp;
++	u_short port;
++	int family, len, i;
++	char *addr, *p;
++	u_long v4a;
++	u_char pfx;
++	int h_error;
++	char numserv[512];
++	char numaddr[512];
++
++	if (sa == NULL)
++		return ENI_NOSOCKET;
++
++	len = sa->sa_len;
++	if (len != salen) return ENI_SALEN;
++	
++	family = sa->sa_family;
++	for (i = 0; afdl[i].a_af; i++)
++		if (afdl[i].a_af == family) {
++			afd = &afdl[i];
++			goto found;
++		}
++	return ENI_FAMILY;
++	
++ found:
++	if (len != afd->a_socklen) return ENI_SALEN;
++	
++	port = ((struct sockinet *)sa)->si_port; /* network byte order */
++	addr = (char *)sa + afd->a_off;
++
++	if (serv == NULL || servlen == 0) {
++		/* what we should do? */
++	} else if (flags & NI_NUMERICSERV) {
++		snprintf(numserv, sizeof(numserv), "%d", ntohs(port));
++		if (strlen(numserv) > servlen)
++			return ENI_MEMORY;
++		strcpy(serv, numserv);
++	} else {
++		sp = getservbyport(port, (flags & NI_DGRAM) ? "udp" : "tcp");
++		if (sp) {
++			if (strlen(sp->s_name) > servlen)
++				return ENI_MEMORY;
++			strcpy(serv, sp->s_name);
++		} else
++			return ENI_NOSERVNAME;
++	}
++
++	switch (sa->sa_family) {
++	case AF_INET:
++		v4a = ((struct sockaddr_in *)sa)->sin_addr.s_addr;
++		if (IN_MULTICAST(v4a) || IN_EXPERIMENTAL(v4a))
++			flags |= NI_NUMERICHOST;
++		v4a >>= IN_CLASSA_NSHIFT;
++		if (v4a == 0 || v4a == IN_LOOPBACKNET)
++			flags |= NI_NUMERICHOST;			
++		break;
++#ifdef INET6
++	case AF_INET6:
++		pfx = ((struct sockaddr_in6 *)sa)->sin6_addr.s6_addr8[0];
++		if (pfx == 0 || pfx == 0xfe || pfx == 0xff)
++			flags |= NI_NUMERICHOST;
++		break;
++#endif
++	}
++	if (host == NULL || hostlen == 0) {
++		/* what should we do? */
++	} else if (flags & NI_NUMERICHOST) {
++		if (inet_ntop(afd->a_af, addr, numaddr, sizeof(numaddr))
++		    == NULL)
++			return ENI_SYSTEM;
++		if (strlen(numaddr) > hostlen)
++			return ENI_MEMORY;
++		strcpy(host, numaddr);
++	} else {
++#ifdef INET6
++		hp = getipnodebyaddr(addr, afd->a_addrlen, afd->a_af, &h_error);
++#else
++		hp = gethostbyaddr(addr, afd->a_addrlen, afd->a_af);
++		h_error = h_errno;
++#endif
++
++		if (hp) {
++			if (flags & NI_NOFQDN) {
++				p = strchr(hp->h_name, '.');
++				if (p) *p = '\0';
++			}
++			if (strlen(hp->h_name) > hostlen) {
++#ifdef INET6
++				freehostent(hp);
++#endif
++				return ENI_MEMORY;
++			}
++			strcpy(host, hp->h_name);
++#ifdef INET6
++			freehostent(hp);
++#endif
++		} else {
++			if (flags & NI_NAMEREQD)
++				return ENI_NOHOSTNAME;
++			if (inet_ntop(afd->a_af, addr, numaddr, sizeof(numaddr))
++			    == NULL)
++				return ENI_NOHOSTNAME;
++			if (strlen(numaddr) > hostlen)
++				return ENI_MEMORY;
++			strcpy(host, numaddr);
++		}
++	}
++	return SUCCESS;
++}
+Index: ncftp3/libncftp/ncftp.h
+diff -u ncftp3/libncftp/ncftp.h:1.1.1.14 ncftp3/libncftp/ncftp.h:1.18
+--- ncftp3/libncftp/ncftp.h:1.1.1.14	Sun Jan 12 11:25:57 2003
++++ ncftp3/libncftp/ncftp.h	Sun Jan 12 11:45:18 2003
+@@ -374,11 +374,10 @@
  	int mlsFeatures;			/* Do not modify this field. */
  	int STATfileParamWorks;			/* Do not modify this field. */
  	int NLSTfileParamWorks;			/* Do not modify this field. */
-+#ifdef ENABLE_IPV6
+-
+-	struct sockaddr_in servCtlAddr;		/* Do not modify this field. */
+-	struct sockaddr_in servDataAddr;	/* Do not modify this field. */
+-	struct sockaddr_in ourCtlAddr;		/* Do not modify this field. */
+-	struct sockaddr_in ourDataAddr;		/* Do not modify this field. */
 +	struct sockaddr_storage servCtlAddr;	/* Do not modify this field. */
 +	struct sockaddr_storage servDataAddr;	/* Do not modify this field. */
 +	struct sockaddr_storage ourCtlAddr;	/* Do not modify this field. */
 +	struct sockaddr_storage ourDataAddr;	/* Do not modify this field. */
-+#else
- 	struct sockaddr_in servCtlAddr;		/* Do not modify this field. */
- 	struct sockaddr_in servDataAddr;	/* Do not modify this field. */
- 	struct sockaddr_in ourCtlAddr;		/* Do not modify this field. */
- 	struct sockaddr_in ourDataAddr;		/* Do not modify this field. */
-+#endif
  	int netMode;				/* Do not use or modify. */
  	char *buf;				/* Do not modify this field. */
  	size_t bufSize;				/* Do not modify this field. */
-diff -urN ncftp-3.0.4.orig/ncftp/cmds.c ncftp-3.0.4/ncftp/cmds.c
---- ncftp-3.0.4.orig/ncftp/cmds.c	Thu Oct 25 02:34:20 2001
-+++ ncftp-3.0.4/ncftp/cmds.c	Thu Nov  8 09:41:04 2001
-@@ -2204,8 +2204,7 @@
+@@ -735,9 +734,9 @@
+ 
+ /* The following block may be changed by configure script */
+ #ifndef Stat
+-#define Stat stat64
+-#define Lstat lstat64
+-#define Fstat fstat64
++#define Stat stat
++#define Lstat lstat
++#define Fstat fstat
+ #endif
+ 
+ #define kFtwNoAutoGrowButContinue (-1)
+Index: ncftp3/libncftp/syshdrs.h
+diff -u ncftp3/libncftp/syshdrs.h:1.1.1.9 ncftp3/libncftp/syshdrs.h:1.8
+--- ncftp3/libncftp/syshdrs.h:1.1.1.9	Thu May 30 23:40:31 2002
++++ ncftp3/libncftp/syshdrs.h	Thu May 30 23:49:39 2002
+@@ -23,6 +23,10 @@
+ #		define _WIN32_WINNT 0x0400
+ #	endif
+ #	include <windows.h>		/* includes <winsock2.h> if _WIN32_WINNT >= 0x400 */
++#	ifdef ENABLE_IPV6
++#	include <ws2tcpip.h>
++#	define INET6_ADDRSTRLEN 46
++#	endif /* ENABLE_IPV6 */
+ #	include <shlobj.h>
+ #	include <io.h>
+ #	include <conio.h>
+@@ -161,6 +165,9 @@
+ #		include <resolv.h>
+ #	endif
+ 
++#	ifndef HAVE_GETADDRINFO
++#	include "addrinfo.h"
++#	endif
+ #	ifdef CAN_USE_SYS_SELECT_H
+ #		include <sys/select.h>
+ #	endif
+Index: ncftp3/ncftp/cmds.c
+diff -u ncftp3/ncftp/cmds.c:1.1.1.13 ncftp3/ncftp/cmds.c:1.12
+--- ncftp3/ncftp/cmds.c:1.1.1.13	Sun Jan 12 11:26:06 2003
++++ ncftp3/ncftp/cmds.c	Sun Jan 12 11:45:18 2003
+@@ -2253,8 +2253,7 @@
  			(void) printf("Unknown host \"%s\".\n", ohost);
  			return (-1);
  		}
@@ -986,56 +2147,113 @@ diff -urN ncftp-3.0.4.orig/ncftp/cmds.c ncftp-3.0.4/ncftp/cmds.c
  	} else {
  		OpenMsg("Connecting to %s via %s...", gConn.host, gConn.firewallHost);
  		Trace(0, "Fw: %s  Type: %d  User: %s  Pass: %s  Port: %u\n", 
-diff -urN ncftp-3.0.4.orig/ncftp/util.c ncftp-3.0.4/ncftp/util.c
---- ncftp-3.0.4.orig/ncftp/util.c	Mon Oct 22 21:36:57 2001
-+++ ncftp-3.0.4/ncftp/util.c	Thu Nov  8 09:41:04 2001
-@@ -865,11 +865,18 @@
- #else
- 	int sj;
- 	vsigproc_t osigpipe, osigint, osigalrm;
+Index: ncftp3/ncftp/syshdrs.h
+diff -u ncftp3/ncftp/syshdrs.h:1.1.1.10 ncftp3/ncftp/syshdrs.h:1.8
+--- ncftp3/ncftp/syshdrs.h:1.1.1.10	Thu May 30 23:40:58 2002
++++ ncftp3/ncftp/syshdrs.h	Thu May 30 23:49:39 2002
+@@ -32,6 +32,9 @@
+ #		define _WIN32_WINNT 0x0400
+ #	endif
+ #	include <windows.h>		/* includes <winsock2.h> if _WIN32_WINNT >= 0x400 */
 +#ifdef ENABLE_IPV6
++#	include <ws2tcpip.h>
++#endif /* ENABLE_IPV6 */
+ #	include <shlobj.h>
+ #	include <process.h>
+ #	include <direct.h>
+@@ -155,6 +158,9 @@
+ #	include <time.h>
+ #	include <pwd.h>
+ #	include <fcntl.h>
++#	ifndef HAVE_GETADDRINFO
++#		include "addrinfo.h"
++#	endif
+ #	if defined(HAVE_SYS_IOCTL_H) && defined(HAVE_TERMIOS_H)
+ #		include <sys/ioctl.h>
+ #		include <termios.h>
+Index: ncftp3/ncftp/util.c
+diff -u ncftp3/ncftp/util.c:1.1.1.11 ncftp3/ncftp/util.c:1.21
+--- ncftp3/ncftp/util.c:1.1.1.11	Sat Jul  6 10:54:56 2002
++++ ncftp3/ncftp/util.c	Tue Jul  9 15:08:50 2002
+@@ -643,44 +643,30 @@
+ int
+ MyGetHostByName(char *const volatile dst, size_t dsize, const char *const hn, int t)
+ {
 +	struct addrinfo hints;
 +	struct addrinfo *res;
 +	int error;
-+#else
- 	struct hostent *hp;
-+#endif
- #ifndef HAVE_INET_NTOP
- 	struct in_addr ina;
- #endif
+ #if (defined(WIN32) || defined(_WINDOWS)) && !defined(__CYGWIN__)
+-	struct hostent *hp;
+-	struct in_addr ina;
  
-+#ifndef	ENABLE_IPV6
- #ifdef HAVE_INET_ATON
- 	if (inet_aton(hn, &ina) != 0) {
- 		/* Address is an IP address string, which is what we want. */
-@@ -883,6 +890,7 @@
+-	if (inet_addr(hn) != (unsigned long) 0xFFFFFFFF) {
+-		/* Address is an IP address string, which is what we want. */
+-		(void) Strncpy(dst, hn, dsize);
+-		return (0);
+-	}
+-
+-	hp = gethostbyname(hn);
+-	if (hp != NULL) {
+-		(void) memcpy(&ina.s_addr, hp->h_addr_list[0], (size_t) hp->h_length);
+-		InetNtoA(dst, ((struct in_addr **) hp->h_addr_list)[0], dsize);
++	memset(&hints, 0, sizeof(hints));
++	hints.ai_family = PF_UNSPEC;
++	hints.ai_socktype = SOCK_STREAM;
++	error = getaddrinfo(hn, NULL, &hints, &res);
++
++	if (error == 0) {
++		char buf[NI_MAXHOST];
++
++		getnameinfo(res->ai_addr, res->ai_addrlen,
++			    buf, sizeof(buf),
++			    NULL, 0, NI_NUMERICHOST);
++		(void) Strncpy(dst, buf, dsize);
++		freeaddrinfo(res);
  		return (0);
  	}
- #endif
-+#endif
+ 
+ #else
+ 	int sj;
+ 	vsigproc_t osigpipe, osigint, osigalrm;
+-	struct hostent *hp;
+-#ifdef HAVE_INET_ATON
+-	struct in_addr ina;
+-#endif
+-
+-#ifdef HAVE_INET_ATON
+-	if (inet_aton(hn, &ina) != 0) {
+-		/* Address is an IP address string, which is what we want. */
+-		(void) Strncpy(dst, hn, dsize);
+-		return (0);
+-	}
+-#else
+-	if (inet_addr(hn) != (unsigned long) 0xFFFFFFFF) {
+-		/* Address is an IP address string, which is what we want. */
+-		(void) Strncpy(dst, hn, dsize);
+-		return (0);
+-	}
+-#endif
  
  #ifdef HAVE_SIGSETJMP
  	osigpipe = osigint = osigalrm = (sigproc_t) 0;
-@@ -907,22 +915,44 @@
+@@ -705,14 +691,25 @@
  		osigalrm = NcSignal(SIGALRM, CancelGetHostByName);
  		if (t > 0)
  			(void) alarm((unsigned int) t);
-+#ifdef ENABLE_IPV6
+-		hp = gethostbyname(hn);
 +		memset(&hints, 0, sizeof(hints));
 +		hints.ai_flags = 0;
 +		hints.ai_family = PF_UNSPEC;
 +		hints.ai_socktype = SOCK_STREAM;
 +		hints.ai_protocol = 0;
 +		error = getaddrinfo(hn, NULL, &hints, &res);
-+#else
- 		hp = gethostbyname(hn);
-+#endif
  		if (t > 0)
  			(void) alarm(0);
  		(void) NcSignal(SIGPIPE, osigpipe);
  		(void) NcSignal(SIGINT, osigint);
  		(void) NcSignal(SIGALRM, osigalrm);
-+#ifdef ENABLE_IPV6
+-		if (hp != NULL) {
+-			InetNtoA(dst, ((struct in_addr **) hp->h_addr_list)[0], dsize);
 +		if (error == 0) {
 +			char buf[NI_MAXHOST];
 +
@@ -1044,85 +2262,583 @@ diff -urN ncftp-3.0.4.orig/ncftp/util.c ncftp-3.0.4/ncftp/util.c
 +				    NULL, 0, NI_NUMERICHOST);
 +			(void) Strncpy(dst, buf, dsize);
 +			freeaddrinfo(res);
-+			return (0);
-+		}
-+#else
- 		if (hp != NULL) {
- #ifdef HAVE_INET_NTOP	/* Mostly to workaround bug in IRIX 6.5's inet_ntoa */
- 			(void) memset(dst, 0, dsize);
--			(void) inet_ntop(AF_INET, hp->h_addr_list[0], dst, dsize - 1);
-+			(void) inet_ntop(hp->h_addrtype, hp->h_addr_list[0], dst, dsize - 1);
- #else
- 			(void) memcpy(&ina.s_addr, hp->h_addr_list[0], (size_t) hp->h_length);
- 			(void) Strncpy(dst, inet_ntoa(ina), dsize);
- #endif
  			return (0);
  		}
-+#endif
  	}
- #endif	/* !Windows */
- 
-diff -urN ncftp-3.0.4.orig/sio/SConnect.c ncftp-3.0.4/sio/SConnect.c
---- ncftp-3.0.4.orig/sio/SConnect.c	Wed Apr 18 00:17:48 2001
-+++ ncftp-3.0.4/sio/SConnect.c	Thu Nov  8 09:41:04 2001
-@@ -6,7 +6,7 @@
+Index: ncftp3/sh_util/syshdrs.h
+diff -u ncftp3/sh_util/syshdrs.h:1.1.1.8 ncftp3/sh_util/syshdrs.h:1.8
+--- ncftp3/sh_util/syshdrs.h:1.1.1.8	Thu May 30 23:40:49 2002
++++ ncftp3/sh_util/syshdrs.h	Thu May 30 23:49:39 2002
+@@ -32,6 +32,9 @@
+ #		define _WIN32_WINNT 0x0400
+ #	endif
+ #	include <windows.h>		/* includes <winsock2.h> if _WIN32_WINNT >= 0x400 */
++#ifdef ENABLE_IPV6
++#	include <ws2tcpip.h>
++#endif /* ENABLE_IPV6 */
+ #	include <shlobj.h>
+ #	include <tchar.h>
+ #	include <process.h>
+@@ -162,6 +165,9 @@
+ #	include <pwd.h>
+ #	include <fcntl.h>
+ #	include <dirent.h>
++#	ifndef HAVE_GETADDRINFO
++#		include "addrinfo.h"
++#	endif
+ #	ifdef HAVE_LOCALE_H
+ #		include <locale.h>
+ #	endif
+Index: ncftp3/sio/SAcceptA.c
+diff -u ncftp3/sio/SAcceptA.c:1.1.1.2 ncftp3/sio/SAcceptA.c:1.3
+--- ncftp3/sio/SAcceptA.c:1.1.1.2	Sun Feb  3 08:41:17 2002
++++ ncftp3/sio/SAcceptA.c	Wed Aug  7 01:15:29 2002
+@@ -8,8 +8,20 @@
+ extern Sjmp_buf gPipeJmp;
  #endif
+ 
++#ifndef HAVE_SOCKADDR_SA_LEN
++#ifndef SA_LEN
++#ifdef ENABLE_IPV6
++#define SA_LEN(x) (((x)->sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) \
++		: (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) \
++		: -1))
++#else  /* ENABLE_IPV6 */
++#define SA_LEN(x) (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : -1)
++#endif /* ENABLE_IPV6 */
++#endif /* SA_LEN */
++#endif /* HAVE_SOCKADDR_SA_LEN */
++
+ int
+-SAcceptA(int sfd, struct sockaddr_in *const addr, int tlen)
++SAcceptA(int sfd, struct sockaddr *const addr, int tlen)
+ {
+ 	int result;
+ #ifndef NO_SIGNALS
+@@ -20,8 +32,12 @@
+ 	if (tlen < 0) {
+ 		errno = 0;
+ 		for (;;) {
+-			size = (sockaddr_size_t) sizeof(struct sockaddr_in);
+-			result = accept(sfd, (struct sockaddr *) addr, &size);
++#ifdef HAVE_SOCKADDR_SA_LEN
++			size = (sockaddr_size_t) (addr->sa_len);
++#else
++			size = (sockaddr_size_t) SA_LEN(addr);
++#endif
++			result = accept(sfd, addr, &size);
+ 			if ((result >= 0) || (errno != EINTR))
+ 				return (result);
+ 		}
+@@ -41,8 +57,8 @@
+ 
+ 	errno = 0;
+ 	do {
+-		size = (sockaddr_size_t) sizeof(struct sockaddr_in);
+-		result = accept(sfd, (struct sockaddr *) addr, &size);
++		size = (sockaddr_size_t) (addr->psa_len);
++		result = accept(sfd, addr, &size);
+ 	} while ((result < 0) && (errno == EINTR));
+ 
+ 	alarm(0);
+Index: ncftp3/sio/SAcceptS.c
+diff -u ncftp3/sio/SAcceptS.c:1.1.1.2 ncftp3/sio/SAcceptS.c:1.4
+--- ncftp3/sio/SAcceptS.c:1.1.1.2	Sun Feb  3 08:41:22 2002
++++ ncftp3/sio/SAcceptS.c	Wed Aug  7 01:58:12 2002
+@@ -3,8 +3,20 @@
+ #	pragma hdrstop
+ #endif
+ 
++#ifndef HAVE_SOCKADDR_SA_LEN
++#ifndef SA_LEN
++#ifdef ENABLE_IPV6
++#define SA_LEN(x) (((x)->sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) \
++		: (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) \
++		: -1))
++#else  /* ENABLE_IPV6 */
++#define SA_LEN(x) (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : -1)
++#endif /* ENABLE_IPV6 */
++#endif /* SA_LEN */
++#endif /* HAVE_SOCKADDR_SA_LEN */
++
+ int
+-SAcceptS(int sfd, struct sockaddr_in *const addr, int tlen)
++SAcceptS(int sfd, struct sockaddr *const addr, int tlen)
+ {
+ 	int result;
+ 	fd_set ss;
+@@ -14,8 +26,12 @@
+ 	if (tlen <= 0) {
+ 		errno = 0;
+ 		for (;;) {
+-			size = (sockaddr_size_t) sizeof(struct sockaddr_in);
+-			result = accept(sfd, (struct sockaddr *) addr, &size);
++#ifdef HAVE_SOCKADDR_SA_LEN
++			size = (sockaddr_size_t) (addr->sa_len);
++#else
++			size = (sockaddr_size_t) SA_LEN(addr);
++#endif
++			result = accept(sfd, addr, &size);
+ 			if ((result >= 0) || (errno != EINTR))
+ 				return (result);
+ 		}
+@@ -49,8 +65,12 @@
+ 	}
+ 
+ 	do {
+-		size = (sockaddr_size_t) sizeof(struct sockaddr_in);
+-		result = accept(sfd, (struct sockaddr *) addr, &size);
++#ifdef HAVE_SOCKADDR_SA_LEN
++		size = (sockaddr_size_t) (addr->sa_len);
++#else
++		size = (sockaddr_size_t) SA_LEN(addr);
++#endif
++		result = accept(sfd, addr, &size);
+ 	} while ((result < 0) && (errno == EINTR));
+ 
+ 	return (result);
+Index: ncftp3/sio/SConnect.c
+diff -u ncftp3/sio/SConnect.c:1.1.1.6 ncftp3/sio/SConnect.c:1.14
+--- ncftp3/sio/SConnect.c:1.1.1.6	Sat Jul  6 10:54:59 2002
++++ ncftp3/sio/SConnect.c	Tue Jul  9 15:08:50 2002
+@@ -8,14 +8,30 @@
+ extern Sjmp_buf gPipeJmp;
+ #endif
+ 
+-int _SConnect(const int sfd, const struct sockaddr_in *const addr, const size_t saddrsiz, const int tlen);
++int _SConnect(const int sfd, const struct sockaddr *const addr, const size_t saddrsiz, const int tlen);
++
++#ifndef HAVE_SOCKADDR_SA_LEN
++#ifndef SA_LEN
++#ifdef ENABLE_IPV6
++#define SA_LEN(x) (((x)->sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) \
++		: (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) \
++		: -1))
++#else  /* ENABLE_IPV6 */
++#define SA_LEN(x) (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : -1)
++#endif /* ENABLE_IPV6 */
++#endif /* SA_LEN */
++#endif /* HAVE_SOCKADDR_SA_LEN */
  
  int
 -SConnect(int sfd, const struct sockaddr_in *const addr, int tlen)
 +SConnect(int sfd, const struct sockaddr *const addr, int tlen)
  {
+ 	int result;
+ 	
+-	result = _SConnect(sfd, addr, (size_t) sizeof(struct sockaddr_in), tlen);
++#ifdef HAVE_SOCKADDR_SA_LEN
++	result = _SConnect(sfd, addr, addr->sa_len, tlen);
++#else
++	result = _SConnect(sfd, addr, SA_LEN(addr), tlen);
++#endif
+ 	return (result);
+ }	/* SConnect */
+ 
+@@ -59,7 +75,7 @@
+ 
+ 
+ int
+-_SConnect(const int sfd, const struct sockaddr_in *const addr, const size_t saddrsiz, const int tlen)
++_SConnect(const int sfd, const struct sockaddr *const addr, const size_t saddrsiz, const int tlen)
+ {
  #ifndef NO_SIGNALS
  	int result;
-@@ -24,8 +24,13 @@
+Index: ncftp3/sio/SConnectByName.c
+diff -u ncftp3/sio/SConnectByName.c:1.1.1.2 ncftp3/sio/SConnectByName.c:1.2
+--- ncftp3/sio/SConnectByName.c:1.1.1.2	Sun Feb  3 08:41:15 2002
++++ ncftp3/sio/SConnectByName.c	Mon Feb 25 05:36:05 2002
+@@ -7,10 +7,10 @@
+ SConnectByName(int sfd, const char * const addrStr, const int tlen)
+ {
+ 	int result;
+-	struct sockaddr_in remoteAddr;
++	struct sockaddr_storage remoteAddr;
  
- 	errno = 0;
- 	do {
-+#ifdef HAVE_SOCKADDR_SA_LEN
- 		result = connect(sfd, (struct sockaddr *) addr,
--			(int) sizeof(struct sockaddr_in));
-+			(int) addr->sa_len);
-+#else
-+		result = connect(sfd, (struct sockaddr *) addr,
-+			(int) SA_LEN(addr));
-+#endif
- 	} while ((result < 0) && (errno == EINTR));
+-	if ((result = AddrStrToAddr(addrStr, &remoteAddr, -1)) == 0) {
+-		result = SConnect(sfd, &remoteAddr, tlen);
++	if ((result = AddrStrToAddr(addrStr, (struct sockaddr *)&remoteAddr, -1)) == 0) {
++		result = SConnect(sfd, (struct sockaddr *)&remoteAddr, tlen);
+ 	}
+ 	return (result);
+ }	/* SConnectByName */
+Index: ncftp3/sio/SRecvfrom.c
+diff -u ncftp3/sio/SRecvfrom.c:1.1.1.3 ncftp3/sio/SRecvfrom.c:1.2
+--- ncftp3/sio/SRecvfrom.c:1.1.1.3	Sun Feb  3 08:41:23 2002
++++ ncftp3/sio/SRecvfrom.c	Mon Jan 20 08:17:10 2003
+@@ -70,7 +70,7 @@
+ #else
  
- 	alarm(0);
-@@ -48,8 +53,13 @@
- 	errno = 0;
- 	if (tlen <= 0) {
- 		do {
-+#ifdef HAVE_SOCKADDR_SA_LEN
-+			result = connect(sfd, (struct sockaddr *) addr,
-+				(int) addr->sa_len);
-+#else
- 			result = connect(sfd, (struct sockaddr *) addr,
--				(int) sizeof(struct sockaddr_in));
-+				(int) SA_LEN(addr));
-+#endif
- 			SETERRNO
- 		} while ((result < 0) && (errno == EINTR));
- 		return (result);
-@@ -72,8 +82,13 @@
+ int
+-SRecvfrom(int sfd, char *const buf, size_t size, int fl, struct sockaddr_in *const fromAddr, int tlen)
++SRecvfrom(int sfd, char *const buf, size_t size, int fl, struct sockaddr *const fromAddr, int tlen)
+ {
+ 	recv_return_t nread;
+ 	int tleft;
+@@ -115,7 +115,7 @@
+ 		}
+ 
+ 		nread = recvfrom(sfd, buf, (recv_size_t) size, fl,
+-			(struct sockaddr *) fromAddr, &alen);
++			fromAddr, &alen);
+ 
+ 		if (nread >= 0)
+ 			break;
+Index: ncftp3/sio/SSendto.c
+diff -u ncftp3/sio/SSendto.c:1.1.1.3 ncftp3/sio/SSendto.c:1.3
+--- ncftp3/sio/SSendto.c:1.1.1.3	Sun Feb  3 08:41:23 2002
++++ ncftp3/sio/SSendto.c	Fri Feb  7 09:54:58 2003
+@@ -3,6 +3,19 @@
+ #	pragma hdrstop
  #endif
  
- 	errno = 0;
-+#ifdef HAVE_SOCKADDR_SA_LEN
-+	result = connect(sfd, (struct sockaddr *) addr,
-+			(int) addr->sa_len);
-+#else
- 	result = connect(sfd, (struct sockaddr *) addr,
--			(int) sizeof(struct sockaddr_in));
-+			(int) SA_LEN(addr));
-+#endif
- 	if (result == 0) 
- 		return 0;	/* Already?!? */
++#ifndef HAVE_SOCKADDR_SA_LEN
++#ifndef SA_LEN
++#ifdef ENABLE_IPV6
++#define SA_LEN(x) (((x)->sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) \
++		                : (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) \
++					                : -1))
++#else  /* ENABLE_IPV6 */
++#define SA_LEN(x) (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : -1)
++#endif /* ENABLE_IPV6 */
++#endif /* SA_LEN */
++#endif /* HAVE_SOCKADDR_SA_LEN */
++
++
+ #ifndef NO_SIGNALS
+ extern Sjmp_buf gNetTimeoutJmp;
+ extern Sjmp_buf gPipeJmp;
+@@ -11,7 +24,7 @@
+ #ifndef NO_SIGNALS
  
-diff -urN ncftp-3.0.4.orig/sio/sio.h ncftp-3.0.4/sio/sio.h
---- ncftp-3.0.4.orig/sio/sio.h	Thu Oct 25 23:59:56 2001
-+++ ncftp-3.0.4/sio/sio.h	Thu Nov  8 09:41:04 2001
-@@ -163,7 +163,7 @@
+ int
+-SSendto(int sfd, const char *const buf, size_t size, int fl, const struct sockaddr_in *const toAddr, int tlen)
++SSendto(int sfd, const char *const buf, size_t size, int fl, const struct sockaddr *const toAddr, int tlen)
+ {
+ 	send_return_t nwrote;
+ 	alarm_time_t tleft;
+@@ -42,9 +55,15 @@
+ 	tleft = (done < now) ? ((alarm_time_t) (done - now)) : 0;
+ 	forever {
+ 		(void) alarm(tleft);
++#ifdef HAVE_SOCKADDR_SA_LEN
++		nwrote = sendto(sfd, buf, (send_size_t) size, fl,
++			toAddr,
++			toAddr->sa_len);
++#else 
+ 		nwrote = sendto(sfd, buf, (send_size_t) size, fl,
+-			(const struct sockaddr *) toAddr,
+-			(sockaddr_size_t) sizeof(struct sockaddr_in));
++                        toAddr,
++		        SA_LEN(toAddr));
++#endif
+ 		(void) alarm(0);
+ 		if (nwrote >= 0)
+ 			break;
+@@ -69,7 +88,7 @@
+ #else
+ 
+ int
+-SSendto(int sfd, const char *const buf, size_t size, int fl, const struct sockaddr_in *const toAddr, int tlen)
++SSendto(int sfd, const char *const buf, size_t size, int fl, const struct sockaddr *const toAddr, int tlen)
+ {
+ 	send_return_t nwrote;
+ 	int tleft;
+@@ -116,10 +135,15 @@
+ 			time(&now);
+ 		}
+ 
++#ifdef HAVE_SOCKADDR_SA_LEN
+ 		nwrote = sendto(sfd, buf, (send_size_t) size, fl,
+-			(const struct sockaddr *) toAddr,
+-			(sockaddr_size_t) sizeof(struct sockaddr_in));
+-
++			toAddr,
++			toAddr->sa_len);
++#else
++		nwrote = sendto(sfd, buf, (send_size_t) size, fl,
++                        toAddr,
++                        SA_LEN(toAddr));
++#endif
+ 		if (nwrote >= 0)
+ 			break;
+ 		if (errno != EINTR)
+@@ -136,14 +160,20 @@
+ 
+ 
+ int
+-Sendto(int sfd, const char *const buf, size_t size, const struct sockaddr_in *const toAddr)
++Sendto(int sfd, const char *const buf, size_t size, const struct sockaddr *toAddr)
+ {
+ 	int result;
+ 
+ 	do {
++#ifdef HAVE_SOCKADDR_SA_LEN
+ 		result = (int) sendto(sfd, buf, (send_size_t) size, 0,
+-				(const struct sockaddr *) toAddr,
+-				(sockaddr_size_t) sizeof(struct sockaddr_in));
++				toAddr,
++				toAddr->sa_len);
++#else
++		result = (int) sendto(sfd, buf, (send_size_t) size, 0,
++                                toAddr,
++                                SA_LEN(toAddr));
++#endif
+ 	} while ((result < 0) && (errno == EINTR));
+ 	return (result);
+ }	/* Sendto */
+Index: ncftp3/sio/SSendtoByName.c
+diff -u ncftp3/sio/SSendtoByName.c:1.1.1.3 ncftp3/sio/SSendtoByName.c:1.2
+--- ncftp3/sio/SSendtoByName.c:1.1.1.3	Sun Feb  3 08:41:23 2002
++++ ncftp3/sio/SSendtoByName.c	Mon Feb 25 05:36:05 2002
+@@ -82,9 +82,9 @@
+ 	time_t done, now;
+ 	fd_set ss;
+ 	struct timeval tv;
+-	struct sockaddr_in toAddr;
++	struct sockaddr_storage toAddr;
+ 
+-	if ((result = AddrStrToAddr(toAddrStr, &toAddr, -1)) < 0) {
++	if ((result = AddrStrToAddr(toAddrStr, (struct sockaddr *)&toAddr, -1)) < 0) {
+ 		return (result);
+ 	}
+ 
+@@ -145,9 +145,9 @@
+ SendtoByName(int sfd, const char *const buf, size_t size, const char *const toAddrStr)
+ {
+ 	int result;
+-	struct sockaddr_in toAddr;
++	struct sockaddr_storage toAddr;
+ 
+-	if ((result = AddrStrToAddr(toAddrStr, &toAddr, -1)) < 0) {
++	if ((result = AddrStrToAddr(toAddrStr, (struct sockaddr *)&toAddr, -1)) < 0) {
+ 		return (result);
+ 	}
+ 
+Index: ncftp3/sio/StrAddr.c
+diff -u ncftp3/sio/StrAddr.c:1.1.1.5 ncftp3/sio/StrAddr.c:1.7
+--- ncftp3/sio/StrAddr.c:1.1.1.5	Sun Jan 12 11:26:09 2003
++++ ncftp3/sio/StrAddr.c	Fri Feb  7 09:54:58 2003
+@@ -3,6 +3,19 @@
+ #	pragma hdrstop
+ #endif
+ 
++#ifndef HAVE_SOCKADDR_SA_LEN
++#ifndef SA_LEN
++#ifdef ENABLE_IPV6
++#define SA_LEN(x) (((x)->sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) \
++		                : (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) \
++					                : -1))
++#else  /* ENABLE_IPV6 */
++#define SA_LEN(x) (((x)->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : -1)
++#endif /* ENABLE_IPV6 */
++#endif /* SA_LEN */
++#endif /* HAVE_SOCKADDR_SA_LEN */
++
++
+ #ifndef INADDR_ANY
+ #	define INADDR_ANY              ((unsigned long int) 0x00000000)
+ #endif
+@@ -200,15 +213,13 @@
+ 
+ 
+ int
+-AddrStrToAddr(const char * const s, struct sockaddr_in * const sa, const int defaultport)
++AddrStrToAddr(const char * const s, struct sockaddr * const sa, const int defaultport)
+ {
+-	char portstr[128];
+-	unsigned int ipnum;
+-	unsigned int port;
+-	struct hostent *hp;
+-	char *hostcp, *atsign, *colon, *cp, *p2;
++	char portstr[128], portstr2[128];
++	struct addrinfo hints, *res;
++	char *hostcp, *atsign, *colon, *cp, *p2, *portp;
++	int error;
+ 
+-	memset(sa, 0, sizeof(struct sockaddr_in));
+ 	strncpy(portstr, s, sizeof(portstr));
+ 	portstr[sizeof(portstr) - 1] = '\0';
+ 
+@@ -216,7 +227,6 @@
+ 		/* Does it look like a URL?  http://host ? */
+ 		if ((colon[1] == '/') && (colon[2] == '/')) {
+ 			*colon = '\0';
+-			port = 0;
+ 			hostcp = colon + 3;
+ 			for (cp = hostcp; *cp != '\0'; cp++) {
+ 				if ((!ISALNUM(*cp)) && (*cp != '.')) {
+@@ -227,29 +237,27 @@
+ 						while (isdigit((int) *cp))
+ 							cp++;
+ 						*cp = '\0';
+-						port = atoi(p2);
+ 					}
+ 					*cp = '\0';
+ 					break;
+ 				}
+ 			}
+-			if (port == 0)
+-				port = ServiceNameToPortNumber(portstr, 0);
+ 		} else {
+ 			/* Look for host.name.domain:port */
+ 			*colon = '\0';
+ 			hostcp = portstr;
+-			port = (unsigned int) atoi(colon + 1);
+ 		}
++		portp = portstr;
+ 	} else if ((atsign = strchr(portstr, '@')) != NULL) {
+ 		/* Look for port@host.name.domain */
+ 		*atsign = '\0';
+ 		hostcp = atsign + 1;
+-		port = (unsigned int) atoi(portstr);
++		portp = portstr;
+ 	} else if (defaultport > 0) {
+ 		/* Have just host.name.domain, use that w/ default port. */
+-		port = (unsigned int) defaultport;
++		sprintf(portstr2, "%d", defaultport);
+ 		hostcp = portstr;
++		portp = portstr2;
+ 	} else {
+ 		/* If defaultport <= 0, they must supply a port number
+ 		 * in the host/port string.
+@@ -258,34 +266,28 @@
+ 		return (kAddrStrToAddrMiscErr);
+ 	}
+ 
+-	sa->sin_port = htons((short) port);
+-
+-	ipnum = inet_addr(hostcp);
+-	if (ipnum != INADDR_NONE) {
+-		sa->sin_family = AF_INET;
+-		sa->sin_addr.s_addr = ipnum;
+-	} else {
+-		errno = 0;
+-		hp = gethostbyname(hostcp);
+-		if (hp == NULL) {
+-			if (errno == 0)
+-				errno = ENOENT;
+-			return (kAddrStrToAddrBadHost);
+-		}
+-		sa->sin_family = hp->h_addrtype;
+-		memcpy(&sa->sin_addr.s_addr, hp->h_addr_list[0],
+-			(size_t) hp->h_length);
+-	}
++	memset(&hints, 0, sizeof(hints));
++	hints.ai_family = PF_UNSPEC;
++	hints.ai_socktype = SOCK_STREAM;
++	error = getaddrinfo(hostcp, portp, &hints, &res);
++	if (error != 0)
++		return (kAddrStrToAddrBadHost);
++	memcpy(sa, res->ai_addr, res->ai_addrlen);
++	freeaddrinfo(res);
+ 	return (0);
+ }	/* AddrStrToAddr */
+ 
+ 
+ 
+ char *
+-AddrToAddrStr(char *const dst, size_t dsize, struct sockaddr_in * const saddrp, int dns, const char *fmt)
++AddrToAddrStr(char *const dst, size_t dsize, struct sockaddr * const saddrp, int dns, const char *fmt)
+ {
+ 	char addrName[128];
+ 	char *addrNamePtr;
++	char portName[128];
++	char *portNamePtr;
++	char portNum[128];
++	char *portNumPtr;
+ 	struct hostent *hp;
+ 	char str[128];
+ 	char s_name[64];
+@@ -293,18 +295,24 @@
+ 	const char *cp;
+ 
+ 	addrNamePtr = NULL;
+-	if (dns == 0) {
+-		InetNtoA(addrName, &saddrp->sin_addr, sizeof(addrName));
+-		addrNamePtr = addrName;
+-	} else {
+-		hp = gethostbyaddr((gethost_addrptr_t) &saddrp->sin_addr, sizeof(struct in_addr), AF_INET);
+-		if ((hp != NULL) && (hp->h_name != NULL) && (hp->h_name[0] != '\0')) {
+-			addrNamePtr = hp->h_name;
+-		} else {
+-			InetNtoA(addrName, &saddrp->sin_addr, sizeof(addrName));
+-			addrNamePtr = addrName;
+-		}
+-	}
++	if (dns == 0)
++		dns = NI_NUMERICHOST;
++	else
++		dns = 0;
++	getnameinfo(saddrp,
++#ifdef HAVE_SOCKADDR_SA_LEN
++		    saddrp->sa_len,
++#else
++		    SA_LEN(saddrp),
++#endif
++		    addrName, sizeof(addrName), portName, sizeof(portName), dns);
++	getnameinfo(saddrp,
++#ifdef HAVE_SOCKADDR_SA_LEN
++		    saddrp->sa_len,
++#else
++		    SA_LEN(saddrp),
++#endif
++		    NULL, 0, portNum, sizeof(portNum), NI_NUMERICSERV);
+ 	if (fmt == NULL)
+ 		fmt = "%h:%p";
+ 	for (dp = dst, dlim = dp + dsize - 1; ; fmt++) {
+@@ -316,8 +324,7 @@
+ 				if (dp < dlim)
+ 					*dp++ = '%';
+ 			} else if (*fmt == 'p') {
+-				sprintf(str, "%u", (unsigned int) ntohs(saddrp->sin_port));
+-				for (cp = str; *cp != '\0'; cp++)
++				for (cp = portNum; *cp != '\0'; cp++)
+ 					if (dp < dlim)
+ 						*dp++ = *cp;
+ 				*dp = '\0';
+@@ -332,13 +339,12 @@
+ 						*dp++ = *cp;
+ 				*dp = '\0';
+ 			} else if (*fmt == 's') {
+-				cp = s_name;
+-				(void) ServicePortNumberToName(ntohs(saddrp->sin_port), s_name, sizeof(s_name), 0);
+-				for ( ; *cp != '\0'; cp++)
++				for (cp = portName ; *cp != '\0'; cp++)
+ 					if (dp < dlim)
+ 						*dp++ = *cp;
+ 				/* endservent(); */
+ 				*dp = '\0';
++#if 0
+ 			} else if ((*fmt == 't') || (*fmt == 'u')) {
+ 				cp = s_name;
+ 				(void) ServicePortNumberToName(ntohs(saddrp->sin_port), s_name, sizeof(s_name), (int) *fmt);
+@@ -347,6 +353,7 @@
+ 						*dp++ = *cp;
+ 				/* endservent(); */
+ 				*dp = '\0';
++#endif
+ 			} else if (*fmt == '\0') {
+ 				break;
+ 			} else {
+Index: ncftp3/sio/sio.h
+diff -u ncftp3/sio/sio.h:1.1.1.6 ncftp3/sio/sio.h:1.10
+--- ncftp3/sio/sio.h:1.1.1.6	Sat Jul  6 10:55:00 2002
++++ ncftp3/sio/sio.h	Mon Jan 20 08:17:11 2003
+@@ -211,10 +211,10 @@
+ int PWrite(int, const char *const, size_t);
+ 
+ /* SAcceptA.c */
+-int SAcceptA(int, struct sockaddr_in *const, int);
++int SAcceptA(int, struct sockaddr *const, int);
+ 
+ /* SAcceptS.c */
+-int SAcceptS(int, struct sockaddr_in *const, int);
++int SAcceptS(int, struct sockaddr *const, int);
+ 
+ /* SBind.c */
+ int SBind(int, const int, const int, const int);
+@@ -224,7 +224,7 @@
  int SClose(int, int);
  
  /* SConnect.c */
@@ -1131,3 +2847,62 @@ diff -urN ncftp-3.0.4.orig/sio/sio.h ncftp-3.0.4/sio/sio.h
  
  /* SConnectByName.c */
  int SConnectByName(int, const char *const, const int);
+@@ -248,7 +248,7 @@
+ int SRecv(int, char *const, size_t, int, int, int);
+ 
+ /* SRecvfrom.c */
+-int SRecvfrom(int, char *const, size_t, int, struct sockaddr_in *const, int);
++int SRecvfrom(int, char *const, size_t, int, struct sockaddr *const, int);
+ 
+ /* SRecvmsg.c */
+ int SRecvmsg(int, void *const, int, int);
+@@ -264,8 +264,8 @@
+ int SSend(int, char *, size_t, int, int);
+ 
+ /* SSendto.c */
+-int SSendto(int, const char *const, size_t, int, const struct sockaddr_in *const, int);
+-int Sendto(int, const char *const, size_t, const struct sockaddr_in *const);
++int SSendto(int, const char *const, size_t, int, const struct sockaddr *const, int);
++int Sendto(int, const char *const, size_t, const struct sockaddr *const);
+ 
+ /* SSendtoByName.c */
+ int SSendtoByName(int, const char *const, size_t, int, const char *const, int);
+@@ -296,8 +296,8 @@
+ unsigned int ServiceNameToPortNumber(const char *const s, const int proto);
+ int ServicePortNumberToName(unsigned short port, char *const dst, const size_t dsize, const int proto);
+ void InetNtoA(char *dst, struct in_addr *ia, size_t siz);
+-int AddrStrToAddr(const char *const, struct sockaddr_in *const, const int);
+-char *AddrToAddrStr(char *const dst, size_t dsize, struct sockaddr_in * const saddrp, int dns, const char *fmt);
++int AddrStrToAddr(const char *const, struct sockaddr *const, const int);
++char *AddrToAddrStr(char *const dst, size_t dsize, struct sockaddr * const saddrp, int dns, const char *fmt);
+ 
+ /* SError.c */
+ const char *SError(int e);
+Index: ncftp3/sio/syshdrs.h
+diff -u ncftp3/sio/syshdrs.h:1.1.1.6 ncftp3/sio/syshdrs.h:1.7
+--- ncftp3/sio/syshdrs.h:1.1.1.6	Thu May 30 23:41:04 2002
++++ ncftp3/sio/syshdrs.h	Thu May 30 23:49:39 2002
+@@ -19,6 +19,9 @@
+ #	define WINVER 0x0400
+ #	define _WIN32_WINNT 0x0400
+ #	include <windows.h>		/* includes <winsock2.h> if _WIN32_WINNT >= 0x400 */
++#ifdef ENABLE_IPV6
++#	include <ws2tcpip.h>
++#endif /* ENABLE_IPV6 */
+ #	include <io.h>
+ #	include <errno.h>
+ #	include <stdio.h>
+Index: ncftp3/vis/syshdrs.h
+diff -u ncftp3/vis/syshdrs.h:1.1.1.7 ncftp3/vis/syshdrs.h:1.4
+--- ncftp3/vis/syshdrs.h:1.1.1.7	Thu May 30 23:40:53 2002
++++ ncftp3/vis/syshdrs.h	Thu May 30 23:49:39 2002
+@@ -94,6 +94,9 @@
+ #include <time.h>
+ #include <pwd.h>
+ #include <fcntl.h>
++#ifndef HAVE_GETADDRINFO
++#	include "addrinfo.h"
++#endif
+ 
+ #ifdef HAVE_LOCALE_H
+ #	include <locale.h>
