@@ -14,7 +14,7 @@ Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-30b19-19990719.diff.gz
 Patch3:		ncftp-pld.patch
 Patch4:		ncftp-shared.patch
 URL:		http://www.ncftp.com/
-BuildRequires:	readline-devel
+BuildRequires:	readline-devel >= 4.1
 BuildRequires:	ncurses-devel >= 5.0
 BuildRoot:	/tmp/%{name}-%{version}-root
 
