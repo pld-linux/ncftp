@@ -1,7 +1,7 @@
 Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
-Version:	3.0.3
+Version:	3.0.4
 Release:	1
 Epoch:		2
 License:	The Clarified Artistic License

@@ -1,47 +1,7 @@
-diff -Nur ncftp-3.0.3.orig/config.h.in ncftp-3.0.3/config.h.in
---- ncftp-3.0.3.orig/config.h.in	Sat Apr  7 17:54:58 2001
-+++ ncftp-3.0.3/config.h.in	Tue Jun 19 15:30:33 2001
-@@ -136,6 +136,9 @@
- /* Define if you have the fstat64 function.  */
- #undef HAVE_FSTAT64
- 
-+/* Define if you have the getaddrinfo function.  */
-+#undef HAVE_GETADDRINFO
-+
- /* Define if you have the getcwd function.  */
- #undef HAVE_GETCWD
- 
-@@ -145,6 +148,9 @@
- /* Define if you have the gethostname function.  */
- #undef HAVE_GETHOSTNAME
- 
-+/* Define if you have the getaddrname function.  */
-+#undef HAVE_GETNAMEINFO
-+
- /* Define if you have the getpass function.  */
- #undef HAVE_GETPASS
- 
-@@ -208,6 +214,9 @@
- /* Define if you have the stat64 function.  */
- #undef HAVE_STAT64
- 
-+/* Define if sockaddr has sa_len member */
-+#undef HAVE_SOCKADDR_SA_LEN
-+
- /* Define if you have the strcasecmp function.  */
- #undef HAVE_STRCASECMP
- 
-@@ -315,3 +324,6 @@
- 
- /* Define if you have the socket library (-lsocket).  */
- #undef HAVE_LIBSOCKET
-+
-+/* Define if you want IPv6 support. */
-+#undef ENABLE_IPV6
-diff -Nur ncftp-3.0.3.orig/configure.in ncftp-3.0.3/configure.in
---- ncftp-3.0.3.orig/configure.in	Fri Apr 13 23:27:37 2001
-+++ ncftp-3.0.3/configure.in	Tue Jun 19 15:30:33 2001
-@@ -191,6 +191,228 @@
+diff -urN ncftp-3.0.4.orig/configure.in ncftp-3.0.4/configure.in
+--- ncftp-3.0.4.orig/configure.in	Thu Oct 25 23:57:48 2001
++++ ncftp-3.0.4/configure.in	Thu Nov  8 09:35:26 2001
+@@ -195,6 +195,228 @@
  	fi
  fi
  
@@ -270,9 +230,19 @@ diff -Nur ncftp-3.0.3.orig/configure.in ncftp-3.0.3/configure.in
  CPPFLAGS="-I$MAINDIR $CPPFLAGS"
  
  if test "$no_signals" = no ; then
-diff -Nur ncftp-3.0.3.orig/libncftp/ftp.c ncftp-3.0.3/libncftp/ftp.c
---- ncftp-3.0.3.orig/libncftp/ftp.c	Sun Apr 15 19:37:13 2001
-+++ ncftp-3.0.3/libncftp/ftp.c	Tue Jun 19 15:30:33 2001
+diff -urN ncftp-3.0.4.orig/libncftp/config.h.in ncftp-3.0.4/libncftp/config.h.in
+--- ncftp-3.0.4.orig/libncftp/config.h.in	Mon Oct 22 19:52:29 2001
++++ ncftp-3.0.4/libncftp/config.h.in	Thu Nov  8 10:10:34 2001
+@@ -219,3 +219,6 @@
+ 
+ /* Define if you have the socks5 library (-lsocks5).  */
+ #undef HAVE_LIBSOCKS5
++
++/* Define if you want IPv6 support. */
++#undef ENABLE_IPV6
+diff -urN ncftp-3.0.4.orig/libncftp/ftp.c ncftp-3.0.4/libncftp/ftp.c
+--- ncftp-3.0.4.orig/libncftp/ftp.c	Mon Oct 15 10:29:46 2001
++++ ncftp-3.0.4/libncftp/ftp.c	Thu Nov  8 10:07:45 2001
 @@ -43,6 +43,7 @@
  
  
@@ -639,9 +609,7 @@ diff -Nur ncftp-3.0.3.orig/libncftp/ftp.c ncftp-3.0.3/libncftp/ftp.c
 +#ifdef ENABLE_IPV6
 +	if (saddr->sa_family == AF_INET6) {
 +		int af, hal, pal;
- 
--	(void) memcpy(&saddr->sin_addr, &n[0], (size_t) 4);
--	(void) memcpy(&saddr->sin_port, &n[4], (size_t) 2);
++
 +		result = RCmd(cip, rp, "LPSV");
 +		if (result < 0)
 +			goto done;
@@ -709,6 +677,8 @@ diff -Nur ncftp-3.0.3.orig/libncftp/ftp.c ncftp-3.0.3/libncftp/ftp.c
 +			goto done;
 +		}
  
+-	(void) memcpy(&saddr->sin_addr, &n[0], (size_t) 4);
+-	(void) memcpy(&saddr->sin_port, &n[4], (size_t) 2);
 +		/* The other side returns a specification in the form of
 +		 * an internet address as the first four integers (each
 +		 * integer stands for 8-bits of the real 32-bit address),
@@ -732,7 +702,7 @@ diff -Nur ncftp-3.0.3.orig/libncftp/ftp.c ncftp-3.0.3/libncftp/ftp.c
 +			Error(cip, kDontPerror, "Cannot parse PASV response: %s\n", rp->msg.first->line);
 +			goto done;
 +		}
-+
+ 
 +		for (j=0, *weird = 0; j<6; j++) {
 +			/* Some ftp servers return bogus port octets, such as
 +			 * boombox.micro.umn.edu.  Let the caller know if we got a
@@ -772,34 +742,35 @@ diff -Nur ncftp-3.0.3.orig/libncftp/ftp.c ncftp-3.0.3/libncftp/ftp.c
 -
 -		result = bind(sockfd, (struct sockaddr *) addrp, sizeof(struct sockaddr_in));
 +#ifdef ENABLE_IPV6
-+		if (addrp->sa_family == AF_INET6)
-+			((struct sockaddr_in6 *)addrp)->sin6_port = 0;	/* Let system pick one. */
-+		else
++		 if (addrp->sa_family == AF_INET6)
++                        ((struct sockaddr_in6 *)addrp)->sin6_port = 0;  /* Let system pick one. */
++                 else
 +#endif
-+			((struct sockaddr_in *)addrp)->sin_port = 0;	/* Let system pick one. */
++                        ((struct sockaddr_in *)addrp)->sin_port = 0;    /* Let system pick one. */
 +#ifdef HAVE_SOCKADDR_SA_LEN
-+		result = bind(sockfd, addrp, addrp->sa_len);
++    		 result = bind(sockfd, addrp, addrp->sa_len);
 +#else
-+		result = bind(sockfd, addrp, SA_LEN(addrp));
++                 result = bind(sockfd, addrp, SA_LEN(addrp));
 +#endif
  	} else {
  		rangesize = (int) ((int) ephemHi - (int) ephemLo);
  		result = 0;
  		for (i=0; i<10; i++) {
  			port = (unsigned short) (((int) rand() % rangesize) + (int) ephemLo);
--			addrp->sin_port = port;
-+#ifdef ENABLE_IPV6
-+			if (addrp->sa_family == AF_INET6)
-+				((struct sockaddr_in6 *)addrp)->sin6_port = port;
-+			else
-+#endif
-+				((struct sockaddr_in *)addrp)->sin_port = port;
- 
+-			addrp->sin_port = htons(port);
+-
 -			result = bind(sockfd, (struct sockaddr *) addrp, sizeof(struct sockaddr_in));
++#ifdef ENABLE_IPV6
++                        if (addrp->sa_family == AF_INET6)
++                                ((struct sockaddr_in6 *)addrp)->sin6_port = port;
++                        else
++#endif
++                                ((struct sockaddr_in *)addrp)->sin_port = port;
++			
 +#ifdef HAVE_SOCKADDR_SA_LEN
-+			result = bind(sockfd, addrp, addrp->sa_len);
++                        result = bind(sockfd, addrp, addrp->sa_len);
 +#else
-+			result = bind(sockfd, addrp, SA_LEN(addrp));
++                        result = bind(sockfd, addrp, SA_LEN(addrp));
 +#endif
  			if (result == 0)
  				break;
@@ -981,9 +952,9 @@ diff -Nur ncftp-3.0.3.orig/libncftp/ftp.c ncftp-3.0.3/libncftp/ftp.c
  		cip->dataSocket = newSocket;
  	}
  
-diff -Nur ncftp-3.0.3.orig/libncftp/ncftp.h ncftp-3.0.3/libncftp/ncftp.h
---- ncftp-3.0.3.orig/libncftp/ncftp.h	Sun Apr 15 05:23:32 2001
-+++ ncftp-3.0.3/libncftp/ncftp.h	Tue Jun 19 15:30:33 2001
+diff -urN ncftp-3.0.4.orig/libncftp/ncftp.h ncftp-3.0.4/libncftp/ncftp.h
+--- ncftp-3.0.4.orig/libncftp/ncftp.h	Thu Oct 25 23:59:56 2001
++++ ncftp-3.0.4/libncftp/ncftp.h	Thu Nov  8 09:41:04 2001
 @@ -178,10 +178,17 @@
  	int mlsFeatures;			/* Do not modify this field. */
  	int STATfileParamWorks;			/* Do not modify this field. */
@@ -1002,10 +973,10 @@ diff -Nur ncftp-3.0.3.orig/libncftp/ncftp.h ncftp-3.0.3/libncftp/ncftp.h
  	int netMode;				/* Do not use or modify. */
  	char *buf;				/* Do not modify this field. */
  	size_t bufSize;				/* Do not modify this field. */
-diff -Nur ncftp-3.0.3.orig/ncftp/cmds.c ncftp-3.0.3/ncftp/cmds.c
---- ncftp-3.0.3.orig/ncftp/cmds.c	Sun Apr 15 20:02:37 2001
-+++ ncftp-3.0.3/ncftp/cmds.c	Tue Jun 19 15:30:33 2001
-@@ -2194,8 +2194,7 @@
+diff -urN ncftp-3.0.4.orig/ncftp/cmds.c ncftp-3.0.4/ncftp/cmds.c
+--- ncftp-3.0.4.orig/ncftp/cmds.c	Thu Oct 25 02:34:20 2001
++++ ncftp-3.0.4/ncftp/cmds.c	Thu Nov  8 09:41:04 2001
+@@ -2204,8 +2204,7 @@
  			(void) printf("Unknown host \"%s\".\n", ohost);
  			return (-1);
  		}
@@ -1015,10 +986,10 @@ diff -Nur ncftp-3.0.3.orig/ncftp/cmds.c ncftp-3.0.3/ncftp/cmds.c
  	} else {
  		OpenMsg("Connecting to %s via %s...", gConn.host, gConn.firewallHost);
  		Trace(0, "Fw: %s  Type: %d  User: %s  Pass: %s  Port: %u\n", 
-diff -Nur ncftp-3.0.3.orig/ncftp/util.c ncftp-3.0.3/ncftp/util.c
---- ncftp-3.0.3.orig/ncftp/util.c	Sun Apr 15 19:36:34 2001
-+++ ncftp-3.0.3/ncftp/util.c	Tue Jun 19 15:36:29 2001
-@@ -845,11 +845,18 @@
+diff -urN ncftp-3.0.4.orig/ncftp/util.c ncftp-3.0.4/ncftp/util.c
+--- ncftp-3.0.4.orig/ncftp/util.c	Mon Oct 22 21:36:57 2001
++++ ncftp-3.0.4/ncftp/util.c	Thu Nov  8 09:41:04 2001
+@@ -865,11 +865,18 @@
  #else
  	int sj;
  	vsigproc_t osigpipe, osigint, osigalrm;
@@ -1037,7 +1008,7 @@ diff -Nur ncftp-3.0.3.orig/ncftp/util.c ncftp-3.0.3/ncftp/util.c
  #ifdef HAVE_INET_ATON
  	if (inet_aton(hn, &ina) != 0) {
  		/* Address is an IP address string, which is what we want. */
-@@ -863,6 +870,7 @@
+@@ -883,6 +890,7 @@
  		return (0);
  	}
  #endif
@@ -1045,7 +1016,7 @@ diff -Nur ncftp-3.0.3.orig/ncftp/util.c ncftp-3.0.3/ncftp/util.c
  
  #ifdef HAVE_SIGSETJMP
  	osigpipe = osigint = osigalrm = (sigproc_t) 0;
-@@ -887,22 +895,44 @@
+@@ -907,22 +915,44 @@
  		osigalrm = NcSignal(SIGALRM, CancelGetHostByName);
  		if (t > 0)
  			(void) alarm((unsigned int) t);
@@ -1091,9 +1062,9 @@ diff -Nur ncftp-3.0.3.orig/ncftp/util.c ncftp-3.0.3/ncftp/util.c
  	}
  #endif	/* !Windows */
  
-diff -Nur ncftp-3.0.3.orig/sio/SConnect.c ncftp-3.0.3/sio/SConnect.c
---- ncftp-3.0.3.orig/sio/SConnect.c	Thu Mar 22 03:13:37 2001
-+++ ncftp-3.0.3/sio/SConnect.c	Tue Jun 19 15:30:33 2001
+diff -urN ncftp-3.0.4.orig/sio/SConnect.c ncftp-3.0.4/sio/SConnect.c
+--- ncftp-3.0.4.orig/sio/SConnect.c	Wed Apr 18 00:17:48 2001
++++ ncftp-3.0.4/sio/SConnect.c	Thu Nov  8 09:41:04 2001
 @@ -6,7 +6,7 @@
  #endif
  
@@ -1148,9 +1119,9 @@ diff -Nur ncftp-3.0.3.orig/sio/SConnect.c ncftp-3.0.3/sio/SConnect.c
  	if (result == 0) 
  		return 0;	/* Already?!? */
  
-diff -Nur ncftp-3.0.3.orig/sio/sio.h ncftp-3.0.3/sio/sio.h
---- ncftp-3.0.3.orig/sio/sio.h	Fri Apr 13 22:05:01 2001
-+++ ncftp-3.0.3/sio/sio.h	Tue Jun 19 15:30:33 2001
+diff -urN ncftp-3.0.4.orig/sio/sio.h ncftp-3.0.4/sio/sio.h
+--- ncftp-3.0.4.orig/sio/sio.h	Thu Oct 25 23:59:56 2001
++++ ncftp-3.0.4/sio/sio.h	Thu Nov  8 09:41:04 2001
 @@ -163,7 +163,7 @@
  int SClose(int, int);
  
