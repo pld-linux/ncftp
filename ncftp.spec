@@ -2,7 +2,8 @@ Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
 Version:	3.0.2
-Release:	1
+Release:	2
+Epoch:		2
 License:	GPL
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -38,8 +39,10 @@ dodatkowo wspiera IPv6.
 %build
 cp autoconf/aclocal.m4 .
 autoconf
-CFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len $RPM_OPT_FLAGS"
-CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len $RPM_OPT_FLAGS"
+CFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len \
+	%{?debug:-O -g}%{!?debug:$RPM_OPT_FLAGS}"
+CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len \
+	%{?debug:-O -g}%{!?debug:$RPM_OPT_FLAGS}"
 export CFLAGS CPPFLAGS
 %configure \
 	--enable-ncurses \
@@ -69,7 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc WHATSNEW-3.0.gz
+%doc *.gz
 %{_prefix}/X11R6/share/applnk/Network/FTP/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
