@@ -1,8 +1,8 @@
 Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
-Version:	3.0beta16
-Release:	2d
+Version:	3.0beta18
+Release:	1
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
 Patch:		%{name}-noroot.patch
 Group:		Applications/Networking
@@ -34,16 +34,9 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT/usr/lib
-
 make prefix=$RPM_BUILD_ROOT/usr install
-
 make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT/usr/lib soinstall
-
-strip $RPM_BUILD_ROOT/usr/bin/*
-
-chmod 755 $RPM_BUILD_ROOT/usr/lib/*.so.*
 
 bzip2 -9 $RPM_BUILD_ROOT/usr/man/man1/* BETA-README WHATSNEW-3.0
 
@@ -59,6 +52,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root, man) /usr/man/man1/*
 
 %changelog
+* Wed Feb 24 1999 Maciej Le¶niewski <nimir@kis.p.lodz.pl>
+  [3.0beta18-1]
+- new version,
+- updated noroot-patch,
+- removed strip in %install macro - not needed.
+
 * Mon Jan 04 1999 PLD-team <pld-list@mailbox.tuniv.szczecin.pl>
 [3.0beta16-2d]
 - build for Linux PLD,
