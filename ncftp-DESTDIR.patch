@@ -1,66 +1,51 @@
-diff -ur ncftp-3.0beta19.old/Makefile.in ncftp-3.0beta19/Makefile.in
---- ncftp-3.0beta19.old/Makefile.in	Fri Jun 11 03:24:30 1999
-+++ ncftp-3.0beta19/Makefile.in	Thu Jun 24 22:43:57 1999
-@@ -36,24 +36,29 @@
- 	( cd ncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
- 	( cd sh_util ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
- 	( cd vis ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
--	-mkdir "$(prefix)" "$(BINDIR)" "$(mandir)" "$(mandir)/man1" 2>/dev/null
-+	-mkdir "$(DESTDIR)$(prefix)" "$(DESTDIR)$(BINDIR)" "$(DESTDIR)$(mandir)" \
-+		"$(DESTDIR)$(mandir)/man1" 2>/dev/null
- 	-@echo '..... Installing the manual pages .....'
--	$(INSTALL_DATA) doc/man/ncftp.1 "$(mandir)/man1/ncftp.1"
--	$(INSTALL_DATA) doc/man/ncftpget.1 "$(mandir)/man1/ncftpget.1"
--	$(INSTALL_DATA) doc/man/ncftpput.1 "$(mandir)/man1/ncftpput.1"
--	$(INSTALL_DATA) doc/man/ncftpbatch.1 "$(mandir)/man1/ncftpbatch.1"
--	$(INSTALL_DATA) doc/man/ncftpls.1 "$(mandir)/man1/ncftpls.1"
--	-@/bin/ls -l "$(mandir)/man1/ncftp.1" "$(mandir)/man1/ncftpget.1" "$(mandir)/man1/ncftpput.1" "$(mandir)/man1/ncftpbatch.1" "$(mandir)/man1/ncftpls.1"
-+	$(INSTALL_DATA) doc/man/ncftp.1 "$(DESTDIR)$(mandir)/man1/ncftp.1"
-+	$(INSTALL_DATA) doc/man/ncftpget.1 "$(DESTDIR)$(mandir)/man1/ncftpget.1"
-+	$(INSTALL_DATA) doc/man/ncftpput.1 "$(DESTDIR)$(mandir)/man1/ncftpput.1"
-+	$(INSTALL_DATA) doc/man/ncftpbatch.1 "$(DESTDIR)$(mandir)/man1/ncftpbatch.1"
-+	$(INSTALL_DATA) doc/man/ncftpls.1 "$(DESTDIR)$(mandir)/man1/ncftpls.1"
-+	-@/bin/ls -l "$(DESTDIR)$(mandir)/man1/ncftp.1" "$(DESTDIR)$(mandir)/man1/ncftpget.1" \
-+		"$(DESTDIR)$(mandir)/man1/ncftpput.1" "$(DESTDIR)$(mandir)/man1/ncftpbatch.1" \
-+		"$(DESTDIR)$(mandir)/man1/ncftpls.1"
- 	-@echo '..... Installing the programs .....'
--	$(INSTALL_PROGRAM) bin/ncftp@EXEEXT@ "$(BINDIR)/ncftp@EXEEXT@"
--	$(INSTALL_PROGRAM) bin/ncftpget@EXEEXT@ "$(BINDIR)/ncftpget@EXEEXT@"
--	$(INSTALL_PROGRAM) bin/ncftpput@EXEEXT@ "$(BINDIR)/ncftpput@EXEEXT@"
--	$(INSTALL_PROGRAM) bin/ncftpls@EXEEXT@ "$(BINDIR)/ncftpls@EXEEXT@"
--	$(INSTALL_PROGRAM) bin/ncftpbatch@EXEEXT@ "$(BINDIR)/ncftpbatch@EXEEXT@"
--	-@/bin/ls -l "$(BINDIR)/ncftp@EXEEXT@" "$(BINDIR)/ncftpget@EXEEXT@" "$(BINDIR)/ncftpput@EXEEXT@" "$(BINDIR)/ncftpls@EXEEXT@" "$(BINDIR)/ncftpbatch@EXEEXT@"
-+	$(INSTALL_PROGRAM) bin/ncftp@EXEEXT@ "$(DESTDIR)$(BINDIR)/ncftp@EXEEXT@"
-+	$(INSTALL_PROGRAM) bin/ncftpget@EXEEXT@ "$(DESTDIR)$(BINDIR)/ncftpget@EXEEXT@"
-+	$(INSTALL_PROGRAM) bin/ncftpput@EXEEXT@ "$(DESTDIR)$(BINDIR)/ncftpput@EXEEXT@"
-+	$(INSTALL_PROGRAM) bin/ncftpls@EXEEXT@ "$(DESTDIR)$(BINDIR)/ncftpls@EXEEXT@"
-+	$(INSTALL_PROGRAM) bin/ncftpbatch@EXEEXT@ "$(DESTDIR)$(BINDIR)/ncftpbatch@EXEEXT@"
-+	-@/bin/ls -l "$(DESTDIR)$(BINDIR)/ncftp@EXEEXT@" "$(DESTDIR)$(BINDIR)/ncftpget@EXEEXT@" \
-+		"$(DESTDIR)$(BINDIR)/ncftpput@EXEEXT@" "$(DESTDIR)$(BINDIR)/ncftpls@EXEEXT@" \
-+		"$(DESTDIR)$(BINDIR)/ncftpbatch@EXEEXT@"
- 	-@echo "(The following will fail if you didn't build the curses-based programs.)"
--	$(INSTALL_PROGRAM) bin/ncftpbookmarks "$(BINDIR)/ncftpbookmarks"
--	-@/bin/ls -l "$(BINDIR)/ncftpbookmarks"
-+	$(INSTALL_PROGRAM) bin/ncftpbookmarks "$(DESTDIR)$(BINDIR)/ncftpbookmarks"
-+	-@/bin/ls -l "$(DESTDIR)$(BINDIR)/ncftpbookmarks"
- 	-@echo 'Done installing NcFTP.'
+diff -Nru ncftp-3.0.1/Makefile.in ncftp-3.0.1.new/Makefile.in
+--- ncftp-3.0.1/Makefile.in	Fri Apr  7 08:44:56 2000
++++ ncftp-3.0.1.new/Makefile.in	Fri Apr  7 08:41:33 2000
+@@ -22,7 +22,8 @@
  
- clean:
-diff -ur ncftp-3.0beta19.old/libncftp/Makefile.in ncftp-3.0beta19/libncftp/Makefile.in
---- ncftp-3.0beta19.old/libncftp/Makefile.in	Thu Jun 24 22:35:31 1999
-+++ ncftp-3.0beta19/libncftp/Makefile.in	Thu Jun 24 22:48:38 1999
-@@ -30,10 +30,10 @@
- 	@echo 'Done making LibNcFTP.'
+ all:
+ 	( cd Strn ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
+-	( cd libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
++	( cd sio ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
++	( cd libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" shared )
+ 	-mkdir bin 2>/dev/null
+ 	( cd ncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" "STRIPFLAG=$(STRIPFLAG)" )
+ 	( cd sh_util ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" "STRIPFLAG=$(STRIPFLAG)" )
+diff -Nru ncftp-3.0.1/libncftp/Makefile.in ncftp-3.0.1.new/libncftp/Makefile.in
+--- ncftp-3.0.1/libncftp/Makefile.in	Fri Apr  7 08:44:56 2000
++++ ncftp-3.0.1.new/libncftp/Makefile.in	Fri Apr  7 08:46:02 2000
+@@ -60,21 +60,21 @@
+ 	-@/bin/ls -l $(LIBSOS) $(LIBSO)
  
  soinstall: $(LIBSO)
--	/bin/rm -f $(SOLIBDIR)/$(LIBSO) $(SOLIBDIR)/$(LIBSOS)
--	cp $(LIBSO) $(SOLIBDIR)/$(LIBSO)
--	chmod 755 $(SOLIBDIR)/$(LIBSO)
--	( cd $(SOLIBDIR) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
-+	/bin/rm -f $(DESTDIR)$(SOLIBDIR)/$(LIBSO) $(DESTDIR)$(SOLIBDIR)/$(LIBSOS)
-+	cp $(LIBSO) $(DESTDIR)$(SOLIBDIR)/$(LIBSO)
-+	chmod 755 $(DESTDIR)$(SOLIBDIR)/$(LIBSO)
-+	( cd $(DESTDIR)$(SOLIBDIR) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
+-	[ -d "$(PREFIX)/lib" ] || mkdir -m 755 "$(PREFIX)/lib"
+-	[ -d "$(PREFIX)/include" ] || mkdir -m 755 "$(PREFIX)/include"
+-	cp $(LIBSO) $(PREFIX)/lib/$(LIBSO)
+-	( cd $(PREFIX)/lib ; /bin/rm -f $(LIBSOS) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
+-	cp ncftp.h ncftp_errno.h $(PREFIX)/include
+-	-chmod a+r $(PREFIX)/lib/$(LIBSO) $(PREFIX)/include/ncftp.h $(PREFIX)/include/ncftp_errno.h
++	[ -d "$(DESTDIR)$(PREFIX)/lib" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/lib"
++	[ -d "$(DESTDIR)$(PREFIX)/include" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/include"
++	cp $(LIBSO) $(DESTDIR)$(PREFIX)/lib/$(LIBSO)
++	( cd $(DESTDIR)$(PREFIX)/lib ; /bin/rm -f $(LIBSOS) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
++	cp ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
++	-chmod a+r $(DESTDIR)$(PREFIX)/lib/$(LIBSO) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
  
- static: $(LIB)
+ install: $(LIB)
+-	[ -d "$(PREFIX)/lib" ] || mkdir -m 755 "$(PREFIX)/lib"
+-	[ -d "$(PREFIX)/include" ] || mkdir -m 755 "$(PREFIX)/include"
+-	cp $(LIB) $(PREFIX)/lib/$(LIB)
+-	cp ncftp.h ncftp_errno.h $(PREFIX)/include
+-	-chmod a+r $(LIB) $(PREFIX)/lib/$(LIB) $(PREFIX)/include/ncftp.h $(PREFIX)/include/ncftp_errno.h
+-	( cd ../sio ; $(MAKE) "PREFIX=$(PREFIX)" install )
+-	( cd ../Strn ; $(MAKE) "PREFIX=$(PREFIX)" install )
++	[ -d "$(DESTDIR)$(PREFIX)/lib" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/lib"
++	[ -d "$(DESTDIR)$(PREFIX)/include" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/include"
++	cp $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB)
++	cp ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
++	-chmod a+r $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
++	( cd ../sio ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install )
++	( cd ../Strn ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install )
  
+ install_samples:
+ 	( cd ./samples ; $(MAKE) install )
