@@ -16,7 +16,6 @@ Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-# based on:	ftp://ftp.kame.net/pub/kame/misc/%{name}-315-v6-20030207.diff.gz
 Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-318-v6-20040720b.diff.gz
 Patch3:		%{name}-lib-makefile.patch
 Patch4:		%{name}-ac25x.patch
