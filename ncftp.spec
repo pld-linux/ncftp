@@ -10,7 +10,7 @@ Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
 Source1:	ncftp.desktop
 Patch0:		ncftp-DESTDIR.patch
 Patch1:		ncftp-shared.patch
-Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-300-v6-20000327.diff
+Patch2:		ncftp-301-v6-20000407.diff.gz
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	ncurses-devel >= 5.0
