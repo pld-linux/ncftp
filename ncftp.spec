@@ -10,8 +10,8 @@ Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
 URL:		http://www.ncftp.com
 Patch0:		ncftp-noroot.patch
 Patch1:		ncftp-DESTDIR.patch
-BuildPrereq:	readline-devel
-BuildPrereq:	ncurses-devel
+BuildRequires:	readline-devel
+BuildRequires:	ncurses-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
