@@ -43,7 +43,7 @@ export CPPFLAGS LDFLAGS
 %configure \
 	--enable-ipv6
 
-make
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
