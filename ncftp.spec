@@ -40,9 +40,9 @@ dodatkowo wspiera IPv6.
 cp autoconf/aclocal.m4 .
 autoconf
 CFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len \
-	%{?debug:-O -g}%{!?debug:$RPM_OPT_FLAGS}"
+	%{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS}"
 CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len \
-	%{?debug:-O -g}%{!?debug:$RPM_OPT_FLAGS}"
+	%{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS}"
 export CFLAGS CPPFLAGS
 %configure \
 	--enable-ncurses \
