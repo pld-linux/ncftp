@@ -18,6 +18,7 @@ Patch1:		%{name}-shared.patch
 Patch2:		ftp://ftp.kame.net/pub/kame/misc/%{name}-304-v6-20011120.diff.gz
 Patch3:		%{name}-sa_len.patch
 Patch4:		%{name}-gcc31.patch
+Patch5:		%{name}-ac25x.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	ncurses-devel >= 5.0
@@ -53,6 +54,7 @@ automáticos, e muito mais.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 cp -f autoconf/aclocal.m4 .

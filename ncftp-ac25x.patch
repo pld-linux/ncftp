@@ -1,0 +1,31 @@
+--- ncftp-3.0.4/configure.in.orig	Wed May  8 17:45:51 2002
++++ ncftp-3.0.4/configure.in	Wed May  8 17:48:14 2002
+@@ -91,7 +91,6 @@
+ AC_SUBST(LDFLAGS)
+ AC_SUBST(STATIC)
+ AC_SUBST(LIBS)
+-AC_SUBST(LIBOBJS)
+ AC_SUBST(LIBSOBJS)
+ AC_SUBST(SFLAG)
+ AC_SUBST(DEFS)
+@@ -235,7 +234,7 @@
+ 
+ AC_CHECK_FUNC(getnameinfo, [
+   AC_DEFINE(HAVE_GETNAMEINFO)], [
+-  LIBOBJS="$LIBOBJS getnameinfo.o"
++  AC_LIBOBJ([getnameinfo])
+   LIBSOBJS="$LIBSOBJS getnameinfo.so"
+ ])
+ 
+@@ -330,9 +329,9 @@
+   AC_MSG_RESULT(good)
+   AC_DEFINE(HAVE_GETADDRINFO)], [
+   AC_MSG_RESULT(buggy)
+-  LIBOBJS="$LIBOBJS getaddrinfo.o"
++  AC_LIBOBJ([getaddrinfo])
+   LIBSOBJS="$LIBSOBJS getaddrinfo.so"])], [
+-  LIBOBJS="$LIBOBJS getaddrinfo.o"
++  AC_LIBOBJ([getaddrinfo])
+   LIBSOBJS="$LIBSOBJS getaddrinfo.so"
+ ])
+ 
