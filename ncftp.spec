@@ -10,6 +10,7 @@ Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
+# Source0-md5:	686ee315742a34bd4132f0d077d2c172
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
