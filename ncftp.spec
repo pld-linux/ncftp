@@ -2,7 +2,7 @@ Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
 Version:	3.0.2
-Release:	2
+Release:	3
 Epoch:		2
 License:	GPL
 Group:		Applications/Networking
@@ -13,16 +13,18 @@ Source1:	%{name}.desktop
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 Patch2:		%{name}-302-v6-20001225.diff.gz
+Patch3:		%{name}-sa_len.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	ncurses-devel >= 5.0
+BuildRequires:	autoconf
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 NcFTP is a ftp client with many advantages over the standard one. It
 includes command line editing, command histories, support for
 recursive gets, automatic logins, background downloading and much
-more. This version support IPv6, too.
+more. This version supports IPv6, too.
 
 %description -l pl
 NcFTP jest zaawansowanym klientem ftp. Pozwala na edytowanie lini
@@ -35,15 +37,14 @@ dodatkowo wspiera IPv6.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
-cp autoconf/aclocal.m4 .
+cp -f autoconf/aclocal.m4 .
 autoconf
-CFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len \
-	%{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS}"
-CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len \
-	%{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS}"
-export CFLAGS CPPFLAGS
+CFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
+CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
+export CPPFLAGS
 %configure \
 	--enable-ncurses \
 	--enable-ipv6
