@@ -34,10 +34,10 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/usr/lib
+install -d $RPM_BUILD_ROOT%{_libdir}
 
 make prefix=$RPM_BUILD_ROOT/usr install
-make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT/usr/lib soinstall
+make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT%{_libdir} soinstall
 
 gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* BETA-README WHATSNEW-3.0
 
@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc BETA-README.gz WHATSNEW-3.0.gz
 
 %attr(755,root,root) /usr/bin/*
-%attr(755,root,root) /usr/lib/*.so*
+%attr(755,root,root) %{_libdir}/*.so*
 %{_mandir}/man1/*
 
 %changelog
