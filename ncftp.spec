@@ -26,7 +26,7 @@ serwerów ftp, automatycznie logowaæ siê itp.
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
-./configure \
+./configure %{_target} \
 	--prefix=/usr
 
 make -C libncftp CFLAGS="$RPM_OPT_FLAGS" shared
