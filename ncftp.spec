@@ -1,13 +1,16 @@
 Summary:	Browser program for the File Transfer Protocol
 Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
-Version:	3.0beta18
-Release:	2
+Version:	3.0beta19
+Release:	1
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
+URL:		http://www.ncftp.com
 Patch:		ncftp-noroot.patch
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieæ
 Copyright:	GPL
+BuildPrereq:	readline-devel
+BuildPrereq:	ncurses-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -27,7 +30,8 @@ serwerów ftp, automatycznie logowaæ siê itp.
 %build
 CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
 ./configure %{_target_platform} \
-	--prefix=/usr
+	--prefix=/usr		\
+	--mandir=$RPM_BUILD_ROOT/usr/share/man
 
 make -C libncftp CFLAGS="$RPM_OPT_FLAGS" shared
 make
@@ -35,6 +39,7 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_libdir}
+install -d $RPM_BUILD_ROOT%{_mandir}
 
 make prefix=$RPM_BUILD_ROOT/usr install
 make -C libncftp SOLIBDIR=$RPM_BUILD_ROOT%{_libdir} soinstall
@@ -53,6 +58,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*
 
 %changelog
+* Thu Jun 24 1999 Michal Margula <alchemyx@pld.org.pl>
+  [3.0beta19-1]
+- upgraded to beta19
+- spec corrected for FHS 2.0
+- added BuildPrereq
+
 * Fri Apr 23 1999 Maciej Le¶niewski <nimir@kis.p.lodz.pl>
   [3.0beta18-2]
 - Gzipped docs
