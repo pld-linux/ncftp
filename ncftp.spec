@@ -49,11 +49,11 @@ make
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir},%{_applnkdir}/Network/FTP}
 
-make install \
+%{__make} install \
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
 	mandir=$RPM_BUILD_ROOT%{_mandir}
 
-make -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
+%{__make} -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
 
