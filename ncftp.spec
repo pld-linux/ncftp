@@ -65,8 +65,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644, root,  man) /usr/man/man1/*
 
 %changelog
-* Fri Sep 04 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
+* Sun Nov  8 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [2.4.3-1]
+- added Group(pl).
+
+* Fri Sep 04 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
 - added pl translation.
 
 * Thu Aug 13 1998 Jeff Johnson <jbj@redhat.com>
