@@ -4,22 +4,22 @@ Summary(es):	Cliente ftp con una interface agradable
 Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente ftp com uma interface agradável
 Name:		ncftp
-Version:	3.1.5
+Version:	3.1.6
 Release:	1
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	686ee315742a34bd4132f0d077d2c172
+# Source0-md5:	4324d913499dc735dca961618879d21a
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-Patch2:		ftp://ftp.kame.net/pub/kame/misc/%{name}-315-v6-20030207.diff.gz
+# based on:	ftp://ftp.kame.net/pub/kame/misc/%{name}-315-v6-20030207.diff.gz
+Patch2:		%{name}-ipv6.patch
 Patch3:		%{name}-sa_len.patch
 Patch4:		%{name}-ac25x.patch
-#Patch4:		%{name}-gcc31.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf
 BuildRequires:	ncurses-devel >= 5.0
