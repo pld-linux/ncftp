@@ -3,13 +3,13 @@ Summary(pl):	Zaawansowany klient FTP
 Name:		ncftp
 Version:	3.0beta19
 Release:	1
+Copyright:	GPL
+Group:		Applications/Networking
+Group(pl):	Aplikacje/Sieæ
 Source:		ftp://ftp.ncftp.com/ncftp/3.0BETA/%{name}-%{version}-src.tar.gz
 URL:		http://www.ncftp.com
 Patch0:		ncftp-noroot.patch
 Patch1:		ncftp-DESTDIR.patch
-Group:		Applications/Networking
-Group(pl):	Aplikacje/Sieæ
-Copyright:	GPL
 BuildPrereq:	readline-devel
 BuildPrereq:	ncurses-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
@@ -30,9 +30,6 @@ serwerów ftp, automatycznie logowaæ siê itp.
 %patch1 -p1
 
 %build
-#cp autoconf/* .
-#aclocal
-#autoconf
 CPPFLAGS="-I/usr/include/ncurses"; export CPPFLAGS
 LDFLAGS="-s"; export LDFLAGS
 %configure 
@@ -42,15 +39,15 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_libdir}
-install -d $RPM_BUILD_ROOT%{_mandir}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_mandir}}
 
 make DESTDIR=$RPM_BUILD_ROOT install
 make -C libncftp DESTDIR=$RPM_BUILD_ROOT soinstall
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
 
-gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* BETA-README WHATSNEW-3.0
+gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man1/* \
+	BETA-README WHATSNEW-3.0
 
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -86,4 +83,4 @@ rm -rf $RPM_BUILD_ROOT
 
 * Mon Jan 04 1999 PLD-team <pld-list@mailbox.tuniv.szczecin.pl>
   [3.0beta16-2d]
-- build for Linux PLD,
+- build for Linux PLD.
