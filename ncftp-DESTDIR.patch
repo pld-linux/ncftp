@@ -1,19 +1,6 @@
-diff -Nru ncftp-3.0.1/Makefile.in ncftp-3.0.1.new/Makefile.in
---- ncftp-3.0.1/Makefile.in	Fri Apr  7 08:44:56 2000
-+++ ncftp-3.0.1.new/Makefile.in	Fri Apr  7 08:41:33 2000
-@@ -22,7 +22,8 @@
- 
- all:
- 	( cd Strn ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
--	( cd libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
-+	( cd sio ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
-+	( cd libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" shared )
- 	-mkdir bin 2>/dev/null
- 	( cd ncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" "STRIPFLAG=$(STRIPFLAG)" )
- 	( cd sh_util ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" "STRIPFLAG=$(STRIPFLAG)" )
-diff -Nru ncftp-3.0.1/libncftp/Makefile.in ncftp-3.0.1.new/libncftp/Makefile.in
---- ncftp-3.0.1/libncftp/Makefile.in	Fri Apr  7 08:44:56 2000
-+++ ncftp-3.0.1.new/libncftp/Makefile.in	Fri Apr  7 08:46:02 2000
+diff -Nru ncftp-3.1.5/libncftp/Makefile.in ncftp-3.1.5.new/libncftp/Makefile.in
+--- ncftp-3.1.5/libncftp/Makefile.in	Fri Apr  7 08:44:56 2000
++++ ncftp-3.1.5.new/libncftp/Makefile.in	Fri Apr  7 08:46:02 2000
 @@ -60,21 +60,21 @@
  	-@/bin/ls -l $(LIBSOS) $(LIBSO)
  
@@ -37,15 +24,15 @@ diff -Nru ncftp-3.0.1/libncftp/Makefile.in ncftp-3.0.1.new/libncftp/Makefile.in
 -	cp $(LIB) $(PREFIX)/lib/$(LIB)
 -	cp ncftp.h ncftp_errno.h $(PREFIX)/include
 -	-chmod a+r $(LIB) $(PREFIX)/lib/$(LIB) $(PREFIX)/include/ncftp.h $(PREFIX)/include/ncftp_errno.h
--	( cd ../sio ; $(MAKE) "PREFIX=$(PREFIX)" install )
--	( cd ../Strn ; $(MAKE) "PREFIX=$(PREFIX)" install )
+-	( cd ../sio ; $(MAKE) "PREFIX=$(PREFIX)" install)
+-	( cd ../Strn ; $(MAKE) "PREFIX=$(PREFIX)" install_min )
 +	[ -d "$(DESTDIR)$(PREFIX)/lib" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/lib"
 +	[ -d "$(DESTDIR)$(PREFIX)/include" ] || mkdir -m 755 "$(DESTDIR)$(PREFIX)/include"
 +	cp $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB)
 +	cp ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
 +	-chmod a+r $(LIB) $(DESTDIR)$(PREFIX)/lib/$(LIB) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
-+	( cd ../sio ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install )
-+	( cd ../Strn ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install )
++	( cd ../sio ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install)
++	( cd ../Strn ; $(MAKE) "PREFIX=$(DESTDIR)$(PREFIX)" install_min )
  
  install_samples:
  	( cd ./samples ; $(MAKE) install )

@@ -4,25 +4,25 @@ Summary(es):	Cliente ftp con una interface agradable
 Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente ftp com uma interface agradável
 Name:		ncftp
-Version:	3.0.4
-Release:	5
+Version:	3.1.5
+Release:	1
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
-Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.gz
+Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-Patch2:		ftp://ftp.kame.net/pub/kame/misc/%{name}-304-v6-20011120.diff.gz
+Patch2:		ftp://ftp.kame.net/pub/kame/misc/%{name}-315-v6-20030207.diff.gz
 Patch3:		%{name}-sa_len.patch
-Patch4:		%{name}-gcc31.patch
-Patch5:		%{name}-ac25x.patch
+Patch4:		%{name}-ac25x.patch
+#Patch4:		%{name}-gcc31.patch
 URL:		http://www.ncftp.com/
-BuildRequires:	readline-devel >= 4.1
-BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	autoconf
+BuildRequires:	ncurses-devel >= 5.0
+BuildRequires:	readline-devel >= 4.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -54,14 +54,12 @@ automáticos, e muito mais.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %build
-cp -f autoconf/aclocal.m4 .
+ln -sf autoconf/aclocal.m4 .
 %{__autoconf}
-CFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
-CPPFLAGS="-I%{_includedir}/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
-export CPPFLAGS
+CFLAGS="-I/usr/include/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
+CPPFLAGS="-I/usr/include/ncurses -Dss_family=__ss_family -Dss_len=__ss_len %{rpmcflags}"
 %configure \
 	--enable-ncurses \
 	--enable-ipv6
@@ -82,15 +80,15 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/FTP
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 install %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1
 
-%post   -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post   -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
+
 %files
 %defattr(644,root,root,755)
-%doc WHATSNEW-3.0 FIREWALL-PROXY-README CHANGELOG LICENSE.txt
+%doc README.txt README.v6 doc/{CHAN*,FIRE*,LICENSE,READLINE,what*}.txt
 %{_applnkdir}/Network/FTP/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
