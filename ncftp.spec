@@ -1,5 +1,7 @@
 Summary:	Browser program for the File Transfer Protocol
+Summary(es):	Cliente ftp con una interface agradable
 Summary(pl):	Zaawansowany klient FTP
+Summary(pt_BR):	Cliente ftp com uma interface agradável
 Name:		ncftp
 Version:	3.0.4
 Release:	1
@@ -26,11 +28,21 @@ includes command line editing, command histories, support for
 recursive gets, automatic logins, background downloading and much
 more. This version supports IPv6, too.
 
+%description -l es
+ncftp es un cliente ftp con varias ventajas sobre el padrón. Incluye
+edición por línea de comando, histórico de comandos, logins
+automáticos, y mucho más.
+
 %description -l pl
 NcFTP jest zaawansowanym klientem ftp. Pozwala na edytowanie linii
 komend, zapamiêtuje komendy, potrafi pobieraæ ca³e katalogi wraz z
 podkatalogami z serwerów ftp, automatycznie logowaæ siê itp. Ta wersja
 dodatkowo wspiera IPv6.
+
+%description -l pt_BR
+ncftp é um cliente ftp com várias vantagens sobre o padrão. Ele inclui
+edição por linha de comando, histórico de comandos, logins
+automáticos, e muito mais.
 
 %prep
 %setup  -q
