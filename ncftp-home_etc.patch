@@ -1,0 +1,26 @@
+diff -ruN ncftp-3.1.9.orig/ncftp/util.c ncftp-3.1.9/ncftp/util.c
+--- ncftp-3.1.9.orig/ncftp/util.c	2005-06-11 02:32:27.000000000 +0200
++++ ncftp-3.1.9/ncftp/util.c	2005-06-11 02:39:12.000000000 +0200
+@@ -481,7 +481,8 @@
+ 			(void) STRNCPY(gUser, envp);
+ 		}
+ 
+-		envp = getenv("HOME");
++		envp = getenv("HOME_ETC");
++		if (envp == NULL) envp = getenv("HOME");
+ 		if (envp == NULL)
+ 			(void) STRNCPY(gHome, "/");
+ 		else
+@@ -494,7 +495,11 @@
+ 			(void) STRNCPY(gShell, envp);
+ 	} else {
+ 		/* Copy home directory. */
+-		(void) STRNCPY(gHome, pwptr->pw_dir);
++		envp = getenv("HOME_ETC");
++		if (envp == NULL)
++			(void) STRNCPY(gHome, pwptr->pw_dir);
++		else
++			(void) STRNCPY(gHome, envp);
+ 
+ 		/* Copy user name. */
+ 		(void) STRNCPY(gUser, pwptr->pw_name);
