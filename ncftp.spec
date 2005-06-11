@@ -5,7 +5,7 @@ Summary(pl):	Zaawansowany klient FTP
 Summary(pt_BR):	Cliente FTP com uma interface agradável
 Name:		ncftp
 Version:	3.1.9
-Release:	3
+Release:	4
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
@@ -20,6 +20,7 @@ Patch1:		%{name}-shared.patch
 Patch2:		ncftp-319-v6-20050419.diff
 Patch3:		%{name}-ac25x.patch
 Patch4:		%{name}-libdir.patch
+Patch5:		%{name}-home_etc.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
@@ -55,6 +56,7 @@ automáticos, e muito mais.
 %patch2 -p1
 %patch3 -p1
 %patch4
+%patch5 -p1
 
 %build
 ln -sf autoconf/aclocal.m4 .
