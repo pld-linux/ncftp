@@ -2,10 +2,10 @@
 +++ ncftp-3.1.5/Makefile.in	Sun Mar 30 22:17:22 2003
 @@ -31,7 +31,7 @@
  libs:
- 	@( cd Strn ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
- 	@( cd sio ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
--	@( cd libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
-+	@( cd libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" shared )
+ 	@( cd ./Strn ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
+ 	@( cd ./sio ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
+-	@( cd ./libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" )
++	@( cd ./libncftp ; $(MAKE) "CC=$(CC)" "CFLAGS=$(CFLAGS)" shared )
  
  progs: libs
  	@[ -d bin ] || mkdir bin
