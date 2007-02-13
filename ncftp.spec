@@ -1,8 +1,8 @@
 Summary:	Browser program for the File Transfer Protocol
-Summary(de.UTF-8):   NcFTP - ein Textmodus FTP-Client
-Summary(es.UTF-8):   Cliente FTP con una interface agradable
-Summary(pl.UTF-8):   Zaawansowany klient FTP
-Summary(pt_BR.UTF-8):   Cliente FTP com uma interface agradável
+Summary(de.UTF-8):	NcFTP - ein Textmodus FTP-Client
+Summary(es.UTF-8):	Cliente FTP con una interface agradable
+Summary(pl.UTF-8):	Zaawansowany klient FTP
+Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
 Version:	3.2.0
 Release:	1
