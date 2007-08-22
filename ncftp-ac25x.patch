@@ -1,6 +1,13 @@
---- ncftp-3.1.5/configure.in.orig	Sun Mar 30 22:22:52 2003
-+++ ncftp-3.1.5/configure.in	Sun Mar 30 22:23:53 2003
-@@ -138,7 +138,7 @@
+--- ncftp-3.2.1/configure.in.orig	2007-08-12 13:27:12.609525915 +0200
++++ ncftp-3.2.1/configure.in	2007-08-12 13:40:36.431333110 +0200
+@@ -146,13 +146,13 @@
+ 
+ AC_CHECK_FUNC(getaddrinfo, [
+   AC_DEFINE(HAVE_GETADDRINFO)], [
+-  LIBOBJS="$LIBOBJS getaddrinfo.o"
++  AC_LIBOBJ([getaddrinfo])
+   LIBSOBJS="$LIBSOBJS getaddrinfo.so"
+ ])
  
  AC_CHECK_FUNC(getnameinfo, [
    AC_DEFINE(HAVE_GETNAMEINFO)], [
@@ -9,21 +16,9 @@
    LIBSOBJS="$LIBSOBJS getnameinfo.so"
  ])
  
-@@ -233,9 +233,9 @@
-   AC_MSG_RESULT(good)
-   AC_DEFINE(HAVE_GETADDRINFO)], [
-   AC_MSG_RESULT(buggy)
--  LIBOBJS="$LIBOBJS getaddrinfo.o"
-+  AC_LIBOBJ([getaddrinfo])
-   LIBSOBJS="$LIBSOBJS getaddrinfo.so"])], [
--  LIBOBJS="$LIBOBJS getaddrinfo.o"
-+  AC_LIBOBJ([getaddrinfo])
-   LIBSOBJS="$LIBSOBJS getaddrinfo.so"
- ])
- 
-@@ -382,7 +382,6 @@
- AC_SUBST(MAKE)
+@@ -323,7 +323,6 @@
  AC_SUBST(Z30)
+ AC_SUBST(Z31)
  AC_SUBST(LIBSET)
 -AC_SUBST(LIBOBJS)
  AC_SUBST(LIBSOBJS)
