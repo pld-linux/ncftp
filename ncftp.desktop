@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Ncftp
 Comment=NcFTP - a text mode FTP client
 Comment[de]=NcFTP - ein Textmodus FTP-Client
@@ -8,7 +7,7 @@ Comment[pl]=NcFTP - tekstowy klient FTP
 Comment[pt]=NcFTP - cliente FTP modo texto
 Comment[pt_BR]=NcFTP - cliente FTP modo texto
 Exec=ncftp
-Icon=ncftp.png
+Icon=ncftp
 Terminal=true
 Type=Application
 Categories=ConsoleOnly;Network;FileTransfer;
