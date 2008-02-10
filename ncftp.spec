@@ -70,7 +70,7 @@ CPPFLAGS="-I/usr/include/ncurses"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_desktopdir}}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_pixmapsdir},%{_mandir},%{_desktopdir},/var/spool/%{name}}
 
 %{__make} install \
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
@@ -95,5 +95,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_desktopdir}/ncftp.desktop
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/*.so.*
+%dir /var/spool/%{name}
 %{_mandir}/man1/*
 %{_pixmapsdir}/ncftp.png
