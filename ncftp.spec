@@ -4,22 +4,21 @@ Summary(es.UTF-8):	Cliente FTP con una interface agradable
 Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
-Version:	3.2.1
+Version:	3.2.2
 Release:	1
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	d82cdfe0d5448172c03b434607414fb8
+# Source0-md5:	c33da134e5e53b5a3b340e0de5456137
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-321-v6-20070822.diff.gz
+Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-322-v6-20080821.diff.gz
 Patch3:		%{name}-ac25x.patch
-Patch4:		%{name}-libdir.patch
-Patch5:		%{name}-home_etc.patch
+Patch4:		%{name}-home_etc.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
@@ -54,8 +53,7 @@ automáticos, e muito mais.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4
-%patch5 -p1
+%patch4 -p1
 
 %build
 ln -sf autoconf/aclocal.m4 .
@@ -83,6 +81,10 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{_desktopdir}
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 install %{SOURCE3} $RPM_BUILD_ROOT%{_mandir}/man1
 
+# devel not used by anything
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libncftp.so
+%{__rm} $RPM_BUILD_ROOT%{_includedir}/ncftp*.h
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -91,10 +93,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.txt README.v6 doc/{CHAN*,FIRE*,LICENSE,READLINE,what*}.txt
-%{_desktopdir}/ncftp.desktop
-%attr(755,root,root) %{_bindir}/*
-%attr(755,root,root) %{_libdir}/*.so.*
+%doc README.txt README.v6 doc/{CHANGELOG,FIREWALLS_AND_PROXIES,LICENSE,READLINE,what_*}.txt
+%attr(755,root,root) %{_bindir}/ncftp*
+%attr(755,root,root) %{_libdir}/libncftp.so.*
 %dir /var/spool/%{name}
-%{_mandir}/man1/*
+%{_mandir}/man1/ncftp*.1*
+%{_desktopdir}/ncftp.desktop
 %{_pixmapsdir}/ncftp.png
