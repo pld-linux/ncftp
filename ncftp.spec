@@ -5,12 +5,12 @@ Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
 Version:	3.2.2
-Release:	1
+Release:	2
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	c33da134e5e53b5a3b340e0de5456137
+# Source0-md5:	b2b4b2fd38c81754b8f13895d784d491
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
