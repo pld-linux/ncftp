@@ -57,12 +57,7 @@ gunzip -c %{SOURCE4} | patch -p1
 %patch3 -p1
 
 %build
-ln -sf autoconf_local/aclocal.m4 .
-cp /usr/share/automake/config.sub sh
-%{__autoconf}
-CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
-CPPFLAGS="-I/usr/include/ncurses"
-%configure \
+%configure2_13 \
 	--enable-ncurses \
 	--enable-ipv6
 
