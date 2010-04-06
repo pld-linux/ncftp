@@ -5,7 +5,7 @@ Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
 Version:	3.2.3
-Release:	0.001
+Release:	1
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
@@ -14,7 +14,7 @@ Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
-Source4:		ftp://ftp.kame.net/pub/kame/misc/ncftp-323-v6-20091109.diff.gz
+Source4:	ftp://ftp.kame.net/pub/kame/misc/ncftp-323-v6-20091109.diff.gz
 # Source4-md5:	9120dcbb0fceacb5174d01024b0ba5a5
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
