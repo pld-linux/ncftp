@@ -4,21 +4,22 @@ Summary(es.UTF-8):	Cliente FTP con una interface agradable
 Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
-Version:	3.2.2
-Release:	2
+Version:	3.2.3
+Release:	0.001
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	b2b4b2fd38c81754b8f13895d784d491
+# Source0-md5:	fac4aa169e1734e8d9617afd4a9b51e5
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
+Source4:		ftp://ftp.kame.net/pub/kame/misc/ncftp-323-v6-20091109.diff.gz
+# Source4-md5:	9120dcbb0fceacb5174d01024b0ba5a5
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
-Patch2:		ftp://ftp.kame.net/pub/kame/misc/ncftp-322-v6-20080821.diff.gz
-Patch3:		%{name}-ac25x.patch
-Patch4:		%{name}-home_etc.patch
+Patch2:		%{name}-ac25x.patch
+Patch3:		%{name}-home_etc.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
@@ -49,14 +50,14 @@ automáticos, e muito mais.
 
 %prep
 %setup -q
+gunzip -c %{SOURCE4} | patch -p1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
-ln -sf autoconf/aclocal.m4 .
+ln -sf autoconf_local/aclocal.m4 .
 %{__autoconf}
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 CPPFLAGS="-I/usr/include/ncurses"
