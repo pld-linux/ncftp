@@ -1,25 +1,29 @@
+# NOTE: update kame patch to use val_getaddrinfo() when/if enabling DNSSEC verification
 Summary:	Browser program for the File Transfer Protocol
 Summary(de.UTF-8):	NcFTP - ein Textmodus FTP-Client
 Summary(es.UTF-8):	Cliente FTP con una interface agradable
 Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
-Version:	3.2.3
+Version:	3.2.5
 Release:	1
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
 Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	fac4aa169e1734e8d9617afd4a9b51e5
+# Source0-md5:	b05c7a6d5269c04891f02f43d4312b30
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
-Source4:	ftp://ftp.kame.net/pub/kame/misc/ncftp-323-v6-20091109.diff.gz
+# not updated yet, replaced by patch4
+#Source4:	ftp://ftp.kame.net/pub/kame/misc/ncftp-323-v6-20091109.diff.gz
 # Source4-md5:	9120dcbb0fceacb5174d01024b0ba5a5
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 Patch2:		%{name}-ac25x.patch
 Patch3:		%{name}-home_etc.patch
+Patch4:		%{name}-kame-v6.patch
+Patch5:		%{name}-ac.patch
 URL:		http://www.ncftp.com/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
@@ -50,15 +54,19 @@ automáticos, e muito mais.
 
 %prep
 %setup -q
-gunzip -c %{SOURCE4} | patch -p1
+#gunzip -c %{SOURCE4} | patch -p1
+%patch4 -p1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch5 -p1
 
 %build
-%configure2_13 \
-	--enable-ncurses \
+%{__autoconf} -I autoconf_local
+%{__autoheader} -I autoconf_local
+CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
+%configure \
 	--enable-ipv6
 
 %{__make}

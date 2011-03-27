@@ -1,5 +1,5 @@
---- ncftp-3.2.2/libncftp/Makefile.in.orig	2008-08-19 06:44:17.000000000 +0200
-+++ ncftp-3.2.2/libncftp/Makefile.in	2008-08-27 19:38:09.914117548 +0200
+--- ncftp-3.2.5/libncftp/Makefile.in.orig	2009-11-30 19:32:47.000000000 +0100
++++ ncftp-3.2.5/libncftp/Makefile.in	2011-03-27 15:53:37.145736435 +0200
 @@ -6,6 +6,7 @@
  PKGNAME=libncftp
  VERSION=@LIBNCFTP_VERSION@
@@ -8,41 +8,41 @@
  
  @SET_MAKE@
  CC=@CC@
-@@ -66,24 +66,24 @@
- 	-@/bin/ls -l $(LIBSOS) $(LIBSO)
+@@ -76,24 +77,24 @@
+ 	-@$(LIST) $(LIBSOS) $(LIBSO)
  
  soinstall: $(LIBSO)
--	[ -d "$(PREFIX)/lib" ] || mkdir -m 755 -p "$(PREFIX)/lib"
--	[ -d "$(PREFIX)/include" ] || mkdir -m 755 -p "$(PREFIX)/include"
--	cp $(LIBSO) $(PREFIX)/lib/$(LIBSO)
--	( cd $(PREFIX)/lib ; /bin/rm -f $(LIBSOS) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
--	cp ncftp.h ncftp_errno.h $(PREFIX)/include
+-	[ -d "$(PREFIX)/lib" ] || $(MKDIR) "$(PREFIX)/lib"
+-	[ -d "$(PREFIX)/include" ] || $(MKDIR) "$(PREFIX)/include"
+-	$(COPY) $(LIBSO) $(PREFIX)/lib/$(LIBSO)
+-	( cd $(PREFIX)/lib ; $(DELETE) $(LIBSOS) ; $(SYMLINK) $(LIBSO) $(LIBSOS) )
+-	$(COPY) ncftp.h ncftp_errno.h $(PREFIX)/include
 -	-chmod a+r $(PREFIX)/lib/$(LIBSO) $(PREFIX)/include/ncftp.h $(PREFIX)/include/ncftp_errno.h
--	-@/bin/ls -ld $(PREFIX)/lib/$(LIBSO)
-+	[ -d "$(DESTDIR)$(LIBDIR)" ] || mkdir -m 755 -p "$(DESTDIR)$(LIBDIR)"
-+	[ -d "$(DESTDIR)/$(PREFIX)/include" ] || mkdir -m 755 -p "$(DESTDIR)/$(PREFIX)/include"
-+	cp $(LIBSO) $(DESTDIR)$(LIBDIR)/$(LIBSO)
-+	( cd $(DESTDIR)$(LIBDIR) ; /bin/rm -f $(LIBSOS) ; /bin/ln -s $(LIBSO) $(LIBSOS) )
-+	cp ncftp.h ncftp_errno.h $(DESTDIR)/$(PREFIX)/include
-+	-chmod a+r $(DESTDIR)$(LIBDIR)/$(LIBSO) $(DESTDIR)/$(PREFIX)/include/ncftp.h $(DESTDIR)/$(PREFIX)/include/ncftp_errno.h
-+	-@/bin/ls -ld $(DESTDIR)$(LIBDIR)/$(LIBSO)
+-	-@$(LIST) $(PREFIX)/lib/$(LIBSO)
++	[ -d "$(DESTDIR)$(LIBDIR)" ] || $(MKDIR) "$(DESTDIR)$(LIBDIR)"
++	[ -d "$(DESTDIR)$(PREFIX)/include" ] || $(MKDIR) "$(DESTDIR)$(PREFIX)/include"
++	$(COPY) $(LIBSO) $(DESTDIR)$(LIBDIR)/$(LIBSO)
++	( cd $(DESTDIR)$(LIBDIR) ; $(DELETE) $(LIBSOS) ; $(SYMLINK) $(LIBSO) $(LIBSOS) )
++	$(COPY) ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
++	-chmod a+r $(DESTDIR)$(LIBDIR)/$(LIBSO) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
++	-@$(LIST) $(DESTDIR)$(LIBDIR)/$(LIBSO)
  	-@echo
  	-@echo "Make sure that your dynamic loader searches for the directory $(PREFIX)/lib."
  	-@echo "For example, edit /etc/ld.so.conf accordingly if your system uses ld.so."
  
  install: $(LIB)
--	[ -d "$(PREFIX)/lib" ] || mkdir -m 755 -p "$(PREFIX)/lib"
--	[ -d "$(PREFIX)/include" ] || mkdir -m 755 -p "$(PREFIX)/include"
--	cp $(LIB) $(PREFIX)/lib/$(LIB)
+-	[ -d "$(PREFIX)/lib" ] || $(MKDIR) "$(PREFIX)/lib"
+-	[ -d "$(PREFIX)/include" ] || $(MKDIR) "$(PREFIX)/include"
+-	$(COPY) $(LIB) $(PREFIX)/lib/$(LIB)
 -	-@@RANLIB@ $(PREFIX)/lib/$(LIB)
--	cp ncftp.h ncftp_errno.h $(PREFIX)/include
+-	$(COPY) ncftp.h ncftp_errno.h $(PREFIX)/include
 -	-chmod a+r $(LIB) $(PREFIX)/lib/$(LIB) $(PREFIX)/include/ncftp.h $(PREFIX)/include/ncftp_errno.h
-+	[ -d "$(DESTDIR)$(LIBDIR)" ] || mkdir -m 755 -p "$(DESTDIR)$(LIBDIR)"
-+	[ -d "$(DESTDIR)/$(PREFIX)/include" ] || mkdir -m 755 -p "$(DESTDIR)/$(PREFIX)/include"
-+	cp $(LIB) $(DESTDIR)$(LIBDIR)/$(LIB)
++	[ -d "$(DESTDIR)$(LIBDIR)" ] || $(MKDIR) "$(DESTDIR)$(LIBDIR)"
++	[ -d "$(DESTDIR)$(PREFIX)/include" ] || $(MKDIR) "$(DESTDIR)$(PREFIX)/include"
++	$(COPY) $(LIB) $(DESTDIR)$(LIBDIR)/$(LIB)
 +	-@@RANLIB@ $(DESTDIR)$(LIBDIR)/$(LIB)
-+	cp ncftp.h ncftp_errno.h $(DESTDIR)/$(PREFIX)/include
-+	-chmod a+r $(LIB) $(DESTDIR)$(LIBDIR)/$(LIB) $(DESTDIR)/$(PREFIX)/include/ncftp.h $(DESTDIR)/$(PREFIX)/include/ncftp_errno.h
++	$(COPY) ncftp.h ncftp_errno.h $(DESTDIR)$(PREFIX)/include
++	-chmod a+r $(LIB) $(DESTDIR)$(LIBDIR)/$(LIB) $(DESTDIR)$(PREFIX)/include/ncftp.h $(DESTDIR)$(PREFIX)/include/ncftp_errno.h
  	( cd ../sio ; $(MAKE) "PREFIX=$(PREFIX)" install)
  	( cd ../Strn ; $(MAKE) "PREFIX=$(PREFIX)" install_min )
  

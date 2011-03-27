@@ -20,30 +20,30 @@
  @Z30@
  	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) $(OBJS) -o ../bin/ncftp@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
  	-@$(STRIP) ../bin/ncftp@EXEEXT@
---- ncftp-3.1.5/sh_util/Makefile.in.orig	Sun Dec 23 20:44:22 2001
-+++ ncftp-3.1.5/sh_util/Makefile.in	Sun Mar 30 22:20:02 2003
+--- ncftp-3.2.5/sh_util/Makefile.in.orig	2010-04-05 23:39:00.000000000 +0200
++++ ncftp-3.2.5/sh_util/Makefile.in	2011-03-27 15:56:19.605729730 +0200
 @@ -25,19 +25,19 @@
  all: $(DPROGS)
  	-@echo 'Done making NcFTP shell utilities.'
  
--../bin/ncftpget@EXEEXT@: ncftpget.c gpshare.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
-+../bin/ncftpget@EXEEXT@: ncftpget.c gpshare.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
- 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) gpshare.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ ncftpget.c -o ../bin/ncftpget@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
+-../bin/ncftpget@EXEEXT@: ncftpget.c gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
++../bin/ncftpget@EXEEXT@: ncftpget.c gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
+ 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ ncftpget.c -o ../bin/ncftpget@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
  	-@$(STRIP) ../bin/ncftpget@EXEEXT@
  
--../bin/ncftpput@EXEEXT@: ncftpput.c gpshare.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
-+../bin/ncftpput@EXEEXT@: ncftpput.c gpshare.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
- 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) gpshare.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ ncftpput.c -o ../bin/ncftpput@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
+-../bin/ncftpput@EXEEXT@: ncftpput.c gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
++../bin/ncftpput@EXEEXT@: ncftpput.c gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
+ 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ spoolutil.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ ncftpput.c -o ../bin/ncftpput@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
  	-@$(STRIP) ../bin/ncftpput@EXEEXT@
  
--../bin/ncftpls@EXEEXT@: ncftpls.c gpshare.@OBJEXT@ preffw.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
-+../bin/ncftpls@EXEEXT@: ncftpls.c gpshare.@OBJEXT@ preffw.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
- 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) gpshare.@OBJEXT@ preffw.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ ncftpls.c -o ../bin/ncftpls@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
+-../bin/ncftpls@EXEEXT@: ncftpls.c gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
++../bin/ncftpls@EXEEXT@: ncftpls.c gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ gpshare.h syshdrs.h ../ncftp/util.h ../ncftp/pref.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
+ 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) gpshare.@OBJEXT@ bookmark.@OBJEXT@ preffw.@OBJEXT@ util.@OBJEXT@ gl_getline.@OBJEXT@ version.@OBJEXT@ ncftpls.c -o ../bin/ncftpls@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
  	-@$(STRIP) ../bin/ncftpls@EXEEXT@
  
--../bin/ncftpbatch@EXEEXT@: ncftpbatch.c preffw.@OBJEXT@ util.@OBJEXT@ spoolutil.@OBJEXT@ version.@OBJEXT@ gpshare.@OBJEXT@ ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h gpshare.h syshdrs.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
-+../bin/ncftpbatch@EXEEXT@: ncftpbatch.c preffw.@OBJEXT@ util.@OBJEXT@ spoolutil.@OBJEXT@ version.@OBJEXT@ gpshare.@OBJEXT@ ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h gpshare.h syshdrs.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
- 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) preffw.@OBJEXT@ util.@OBJEXT@ spoolutil.@OBJEXT@ version.@OBJEXT@ gpshare.@OBJEXT@ ncftpbatch.c -o ../bin/ncftpbatch@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
+-../bin/ncftpbatch@EXEEXT@: ncftpbatch.c preffw.@OBJEXT@ util.@OBJEXT@ spoolutil.@OBJEXT@ version.@OBJEXT@ gpshare.@OBJEXT@ bookmark.@OBJEXT@ ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h gpshare.h syshdrs.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.a
++../bin/ncftpbatch@EXEEXT@: ncftpbatch.c preffw.@OBJEXT@ util.@OBJEXT@ spoolutil.@OBJEXT@ version.@OBJEXT@ gpshare.@OBJEXT@ bookmark.@OBJEXT@ ../ncftp/util.h ../ncftp/pref.h ../ncftp/spool.h gpshare.h syshdrs.h ../libncftp/ncftp.h ../libncftp/ncftp_errno.h ../libncftp/libncftp.so
+ 	@CCDV@$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) preffw.@OBJEXT@ util.@OBJEXT@ spoolutil.@OBJEXT@ version.@OBJEXT@ gpshare.@OBJEXT@ bookmark.@OBJEXT@ ncftpbatch.c -o ../bin/ncftpbatch@EXEEXT@ $(LDFLAGS) -lncftp -lStrn -lsio $(LIBS)
  	-@$(STRIP) ../bin/ncftpbatch@EXEEXT@
  	-@( cd ../bin ; rm -f ncftpspooler@EXEEXT@ ; ln -s ncftpbatch@EXEEXT@ ncftpspooler@EXEEXT@ )
 --- ncftp-3.1.5/vis/Makefile.in.orig	Sun Dec 23 20:44:25 2001
