@@ -17,7 +17,7 @@ Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
 # not updated yet, replaced by patch4
 #Source4:	ftp://ftp.kame.net/pub/kame/misc/ncftp-323-v6-20091109.diff.gz
-# Source4-md5:	9120dcbb0fceacb5174d01024b0ba5a5
+## Source4-md5:	9120dcbb0fceacb5174d01024b0ba5a5
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 Patch2:		%{name}-ac25x.patch
