@@ -6,7 +6,7 @@ Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
 Version:	3.2.5
-Release:	1
+Release:	2
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
@@ -29,6 +29,8 @@ BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	readline-devel >= 4.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		skip_post_check_so	libncftp.so.*
 
 %description
 NcFTP is a FTP client with many advantages over the standard one. It
