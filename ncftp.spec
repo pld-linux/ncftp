@@ -6,7 +6,7 @@ Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
 Version:	3.2.5
-Release:	2
+Release:	3
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
