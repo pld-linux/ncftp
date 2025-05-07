@@ -1,0 +1,11 @@
+--- ncftp-3.3.0/autoconf_local/aclocal.m4.orig	2025-04-19 18:17:38.000000000 +0200
++++ ncftp-3.3.0/autoconf_local/aclocal.m4	2025-05-07 06:25:26.099515663 +0200
+@@ -416,7 +416,7 @@ AC_DEFUN(wi_TRY_RUN_NATIVE,
+ [cat > conftest.$ac_ext <<EOF
+ [#]line __oline__ "configure"
+ #include "confdefs.h"
+-ifelse(AC_LANG, CPLUSPLUS, [#ifdef __cplusplus
++ifelse(_AC_LANG, C++, [#ifdef __cplusplus
+ extern "C" void exit(int);
+ #endif
+ ])dnl

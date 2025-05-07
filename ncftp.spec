@@ -4,20 +4,21 @@ Summary(es.UTF-8):	Cliente FTP con una interface agradable
 Summary(pl.UTF-8):	Zaawansowany klient FTP
 Summary(pt_BR.UTF-8):	Cliente FTP com uma interface agradável
 Name:		ncftp
-Version:	3.2.6
+Version:	3.3.0
 Release:	1
 Epoch:		2
 License:	The Clarified Artistic License
 Group:		Applications/Networking
-Source0:	ftp://ftp.ncftp.com/ncftp/%{name}-%{version}-src.tar.xz
-# Source0-md5:	42d0f896d69a4d603ec097546444245f
+Source0:	https://www.ncftp.com/public_ftp/ncftp/%{name}-%{version}-src.tar.gz
+# Source0-md5:	43056719c50cae2ed6b614e20c86d37e
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	ncftpbookmarks.1
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-shared.patch
 Patch2:		%{name}-home_etc.patch
-URL:		http://www.ncftp.com/
+Patch3:		%{name}-ac.patch
+URL:		https://www.ncftp.com/ncftp/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	readline-devel >= 4.1
@@ -37,8 +38,8 @@ edición por línea de comando, histórico de comandos, logins
 automáticos, y mucho más.
 
 %description -l pl.UTF-8
-NcFTP jest zaawansowanym klientem FTP. Pozwala na edycję linii poleceń,
-zapamiętuje polecenia, potrafi pobierać całe katalogi wraz z
+NcFTP jest zaawansowanym klientem FTP. Pozwala na edycję linii
+poleceń, zapamiętuje polecenia, potrafi pobierać całe katalogi wraz z
 podkatalogami z serwerów FTP, automatycznie logować się itp. Ta wersja
 dodatkowo wspiera IPv6.
 
@@ -52,6 +53,7 @@ automáticos, e muito mais.
 %patch -P0 -p1
 %patch -P1 -p1
 %patch -P2 -p1
+%patch -P3 -p1
 
 %build
 %{__autoconf} -I autoconf_local
